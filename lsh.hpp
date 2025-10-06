@@ -1,4 +1,4 @@
-//lsh.h
+//lsh.hpp
 
 #include <iostream>
 #include <vector>
