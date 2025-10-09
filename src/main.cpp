@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstring>
-#include "lsh.hpp"
+#include "../include/lsh.hpp"
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
         lsh LSH(seed, input_file, query_file, output_file, k, L, w, N, R, type, range);
         LSH.print_params();
         LSH.lsh_func();
+        LSH.CreateHFun( {1, 5 ,2 ,3},4);
     }
     else if (use_hypercube) {
         cout << "\n>>> Running Hypercube Algorithm...\n";

@@ -8,7 +8,7 @@
 #include <climits>
 #include <cstdio>
 #include <cstdlib>
-#include "lsh.hpp"
+#include "../include/lsh.hpp"
 
 using namespace std;
 lsh :: lsh(int seed1, string input_file1, string query_file1, string output_file1, int k1, int L1, float w1, int N1, float R1, string type1, bool range1){
@@ -75,6 +75,7 @@ uint64_t lsh:: CreateHFun(const vector<double>& point, int tableIndex){
         }
         double numerator = dot_product + randomshifts[tableIndex][i];
      
+        cout<< w <<endl;
         return sum = floor( (double) (numerator) / w);
     }
 }
@@ -93,12 +94,12 @@ void lsh:: CreateHashTables(){
     // }
 }
 
-void lsh_func(){
+void lsh::lsh_func(){
 
     cout<<"LSH Algorithm" <<endl;
 
     //Initialize();
-   // CreateHashTables();
+    //CreateHashTables();
     
 }
 
