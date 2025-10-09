@@ -36,21 +36,30 @@ vector<vector<float>> read_sift_file(const string& filename) {
 }
 
 int main() {
-    string filename = "../../sift/sift_base.fvecs";  // <-- το δικό σου αρχείο
+    string filename = "../sift/sift_base.fvecs";  // <-- το δικό σου αρχείο
     auto data = read_sift_file(filename);
 
-    string filename1 = "../../sift/sift_query.fvecs";
+    string filename1 = "../sift/sift_query.fvecs";
     auto data1 = read_sift_file(filename1);
 
-    cout << "First vector (first 10 coords): ";
-    for(int j =0; j <5; j++){
-    for (int i = 0; i < 10; ++i)
-        cout << data[j][i] << " ";
-    cout << endl;}
+    string filename2 = "train-images-idx3-ubyte.gz";
+    auto data2 = read_sift_file(filename2);
 
-     cout << "First query (first 10 coords): ";
+    // cout << "First vector (first 10 coords): ";
+    // for(int j =0; j <5; j++){
+    // for (int i = 0; i < 10; ++i)
+    //     cout << data[j][i] << " ";
+    // cout << endl;}
+
+    //  cout << "First query (first 10 coords): ";
+    // for(int j=0; j<5; j++){
+    //  for (int i = 0; i < 10; ++i)
+    //     cout << data1[j][i] << " ";
+    // cout << endl;}
+
+    cout << "First query (first 10 coords): ";
     for(int j=0; j<5; j++){
      for (int i = 0; i < 10; ++i)
-        cout << data1[j][i] << " ";
+        cout << data2[j][i] << " ";
     cout << endl;}
 }

@@ -26,6 +26,6 @@ run:
 
 # Clean
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) sift
 
 .PHONY: all run clean
