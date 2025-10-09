@@ -1,8 +1,8 @@
 //main1.cpp
 
 #include <iostream>
-#include "include/mnist_data.hpp"
-#include "include/sift_data.hpp"
+#include "../include/mnist_data.hpp"
+#include "../include/sift_data.hpp"
 
 int main(){
     cout << "MNIST:  " << endl;

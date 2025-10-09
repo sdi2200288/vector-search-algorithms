@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include "include/sift_data.hpp"
+#include "../include/sift_data.hpp"
 // #include <vector>
 // #include <string>
 // using namespace std;

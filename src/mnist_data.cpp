@@ -2,7 +2,7 @@
 #include <fstream>
 // #include <vector>
 // #include <string>
-#include "include/mnist_data.hpp"
+#include "../include/mnist_data.hpp"
 // using namespace std;
 
 // =============================================================
