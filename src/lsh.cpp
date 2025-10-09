@@ -94,7 +94,7 @@ void lsh:: CreateHashTables(){
     // }
 }
 
-void lsh::lsh_func(){
+void lsh_func(){
 
     cout<<"LSH Algorithm" <<endl;
 
