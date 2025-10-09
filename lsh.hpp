@@ -16,7 +16,10 @@ class lsh{
     public:
         lsh(int seed1, std::string input_file1, std::string query_file1, std::string output_file1, int k1, int L1, float w1, int N1, float R1, std::string type1, bool range1);
         ~lsh();
-        void lsh_func(int seed, std::string input_file, std::string query_file, std::string output_file, int k, int L, float w, int N, float R, std::string type, bool range);
+        void lsh_func(int seed, std::string input_file, std::string query_file, std::string output_file, int k, int L, float w, int N, float R, std::string type, bool range){
+
+            
+        }
 
          void print_params() {
             std::cout << "input_file: " << input_file << "\n"
