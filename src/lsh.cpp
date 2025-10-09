@@ -43,18 +43,18 @@ void lsh:: Initialize(){
     uniform_real_distribution<double> uniform_dist(0.0, w);
 
     randomvectors.resize(L);
-    randomsifts.resize(L);
+    randomshifts.resize(L);
 
     for(int i=0; i<L ; i++){
         randomvectors[i].resize(k);
-        randomvsifts[i].resize(k);
+        randomshifts[i].resize(k);
         
         for(int j=0; j<k ; j++){
             randomvectors[i][j].resize(dimension);  // Δημιουργία τυχαίου διανύσματος v διάστασης 178(SIFT)
             for(int dim = 0 ; dim < dimension ; dim++){
                 randomvectors[i][j][dim] = normal_dist(generator);
             }
-            randomvsifts[i][j] = uniform_dist(generator);  // Δημιουργία τυχαίου διανύσματος t διάστασης 178(SIFT)
+            randomshifts[i][j] = uniform_dist(generator);  // Δημιουργία τυχαίου διανύσματος t διάστασης 178(SIFT)
         }
     }
 
@@ -63,20 +63,19 @@ void lsh:: Initialize(){
 uint64_t lsh:: CreateHFun(const vector<double>& point, int tableIndex){
     int sum =0;
     
-
     for (int i=0; i<k; i++){
         double dot_product =0;
         for(int dim = 0 ; dim < dimension ; dim++){
-            dot_product += randomvectors[tableIndex][i][dim]*p[i];
+            dot_product += randomvectors[tableIndex][i][dim]*point[i];
         } 
 
         if(dot_product > INT_MAX || dot_product < INT_MIN){
             cout<<"Overflow"<<endl;
             exit(EXIT_FAILURE);
         }
-        double numerator = dot_product + randomvsifts[tableIndex][i];
+        double numerator = dot_product + randomshifts[tableIndex][i];
      
-        return sum = floor( (double) (numerator) / w)
+        return sum = floor( (double) (numerator) / w);
     }
 }
 
@@ -86,24 +85,24 @@ void lsh:: CreateHashTables(){
 
     hashTables.resize(L);
 
-    for(int i =0 ; i < L; i++){
-        for(int j =0 ; j < dataset.size(); j++){
-            uint64_t hashV = CreateHFun(dataset[j],i);
-            hashTables[i][j].push_back(j);
-        }    
-    }
+    // for(int i =0 ; i < L; i++){
+    //     for(int j =0 ; j < tzset.size(); j++){
+    //         uint64_t hashV = CreateHFun(dataset[j],i);
+    //         hashTables[i][j].push_back(j);
+    //     }    
+    // }
 }
 
 void lsh_func(){
 
     cout<<"LSH Algorithm" <<endl;
 
-    Initialize();
-    CreateHashTables();
+    //Initialize();
+   // CreateHashTables();
     
 }
 
-void print_params() {
+void lsh:: print_params() {
     std::cout << "input_file: " << input_file << "\n"
               << "query_file: " << query_file << "\n"
               << "output_file: " << output_file << "\n"
