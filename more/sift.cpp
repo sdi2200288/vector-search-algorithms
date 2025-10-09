@@ -208,10 +208,10 @@ vector<vector<float>> load_dataset(const string& filename, const string& type) {
 // =============================================================
 int main() {
     cout << "=== Φόρτωση SIFT ===" << endl;
-    auto sift_data = load_dataset("../../sift/sift_base.fvecs", "sift");
+    auto sift_data = load_dataset("../sift_data/sift_base.fvecs", "sift");
 
     cout << "=== Φόρτωση SIFT Queries ===" << endl;
-    auto sift_queries = load_dataset("../../sift/sift_query.fvecs", "sift");
+    auto sift_queries = load_dataset("..//sift_query.fvecs", "sift");
 
     cout << "=== Φόρτωση MNIST ===" << endl;
     auto mnist_data = load_dataset("train-images-idx3-ubyte", "mnist");
