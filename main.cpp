@@ -47,6 +47,7 @@ int main(int argc, char *argv[]) {
         cout << "\n>>> Running LSH Algorithm...\n";
         lsh LSH(seed, input_file, query_file, output_file, k, L, w, N, R, type, range);
         LSH.print_params();
+        LSH.lsh_func();
     }
     else if (use_hypercube) {
         cout << "\n>>> Running Hypercube Algorithm...\n";
