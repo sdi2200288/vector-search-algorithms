@@ -8,7 +8,7 @@
 #include <climits>
 #include <cstdio>
 #include <cstdlib>
-#include "lsh.hpp"
+#include "../include/lsh.hpp"
 
 using namespace std;
 lsh :: lsh(int seed1, string input_file1, string query_file1, string output_file1, int k1, int L1, float w1, int N1, float R1, string type1, bool range1){
