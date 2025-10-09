@@ -47,8 +47,10 @@ int main(int argc, char *argv[]) {
         cout << "\n>>> Running LSH Algorithm...\n";
         lsh LSH(seed, input_file, query_file, output_file, k, L, w, N, R, type, range);
         LSH.print_params();
-        LSH.lsh_func();
-        LSH.CreateHFun( {1, 5 ,2 ,3},4);
+        // LSH.lsh_func();
+        // uint64_t x = LSH.CreateHFun( {1, 5 ,2 ,3},4);
+        // cout << x<< endl;
+        LSH.CreateHashTables();
     }
     else if (use_hypercube) {
         cout << "\n>>> Running Hypercube Algorithm...\n";

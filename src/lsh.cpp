@@ -63,19 +63,30 @@ void lsh:: Initialize(){
 uint64_t lsh:: CreateHFun(const vector<double>& point, int tableIndex){
     int sum =0;
     
+    
     for (int i=0; i<k; i++){
-        double dot_product =0;
-        for(int dim = 0 ; dim < dimension ; dim++){
-            dot_product += randomvectors[tableIndex][i][dim]*point[i];
+        double dot_product =0.0;
+    
+        cout << tableIndex << "  " << randomvectors.size() << endl;
+
+        for(int dim = 0 ; dim < tableIndex ; dim++){
+            cout << randomvectors[tableIndex][i][dim] << "  "  << point[dim] << "  " << endl;     
+            
+            dot_product += randomvectors[tableIndex][i][dim]*point[dim];
+            
+            // cout << "aaa   " << dot_product<< endl;
         } 
 
+        
         if(dot_product > INT_MAX || dot_product < INT_MIN){
             cout<<"Overflow"<<endl;
             exit(EXIT_FAILURE);
         }
+        cout << randomshifts[tableIndex][i] << "  " << dot_product  << endl;
         double numerator = dot_product + randomshifts[tableIndex][i];
+        cout << numerator << endl;
      
-        cout<< w <<endl;
+        // cout<< w <<endl;
         return sum = floor( (double) (numerator) / w);
     }
 }
@@ -85,6 +96,10 @@ void lsh:: CreateHashTables(){
     cout<<"Create L:"<< L << "HashTables" <<endl;
 
     hashTables.resize(L);
+
+    Initialize();
+    uint64_t x = CreateHFun( {1,2 ,3} ,3);
+    cout << x << "   "<< endl;
 
     // for(int i =0 ; i < L; i++){
     //     for(int j =0 ; j < tzset.size(); j++){
@@ -99,7 +114,7 @@ void lsh_func(){
     cout<<"LSH Algorithm" <<endl;
 
     //Initialize();
-    //CreateHashTables();
+    // CreateHashTables();
     
 }
 
