@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstring>
-#include "lsh.hpp"
+#include "../include/lsh.hpp"
 using namespace std;
 
 int main(int argc, char *argv[]) {
