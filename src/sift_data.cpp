@@ -67,6 +67,10 @@ vector<float> return_sift_data(){
         }
         cout << endl;
     // }
+    
+    // for(int i=0; i<128; i++){
+    //     return sift_data[0][i];
+    // }
 
 }
 

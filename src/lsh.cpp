@@ -10,6 +10,8 @@
 #include <cstdlib>
 
 #include "../include/lsh.hpp"
+#include "../include/sift_data.hpp"
+#include "../include/mnist_data.hpp"
 
 using namespace std;
 

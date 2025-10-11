@@ -72,12 +72,13 @@ vector<float> return_mnist_data(){
     //     cout << mnist_data[1][i] << " ";
     // cout << endl;  
 
-    // return mnist_data[0];
+    //return mnist_data[0];
     // for(int i=0; i<mnist_data.size(); i++){
         for(int j=0; j<mnist_data[0].size(); ++j){
             cout << mnist_data[0][j] << " ";
         }
         cout << endl;
+    
     // }
     // for(int i=0; i<784; i++){
     //     return mnist_data[0][i];
