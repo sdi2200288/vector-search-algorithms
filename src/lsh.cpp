@@ -1,14 +1,18 @@
 //LSH ALGORITHM
 #include <iostream>
 #include <fstream>
-#include <cmath>
-#include <random>
 #include <vector>
 #include <string>
+#include <cmath>
+#include <random>
+#include <climits>
+#include <cstdio>
+#include <cstdlib>
 
 #include "../include/lsh.hpp"
 
 using namespace std;
+
 lsh :: lsh(int seed1, string input_file1, string query_file1, string output_file1, int k1, int L1, float w1, int N1, float R1, string type1, bool range1){
     seed = seed1;
     input_file = input_file1;
@@ -22,9 +26,7 @@ lsh :: lsh(int seed1, string input_file1, string query_file1, string output_file
     type = type1;
     range = range1;
 
-    // Ορισμός διάστασης βάσει τύπου
-    if (type == "mnist") dimension = 784;
-    else dimension = 128; // SIFT default
+    dimension = (type == "mnist") ? 784 : 128;
 
     cout << "LSH Constructed!" << endl;
 }
@@ -33,86 +35,102 @@ lsh :: ~lsh(){
     cout << "LSH Deconstructed!" << endl;
 }
 
+//Αρχικοποίηση τυχαίων διανυσμάτων (v) κ μετατοπίσεων (t)
+
 void lsh:: Initialize(){
     cout<<"Initialize v and t"<<endl;
-    
-    int dim = dimension;
 
-    mt19937 gen(seed);
-    normal_distribution<float> normal(0.0f,1.0f);         // v_i από Ν(0,1)
-    uniform_real_distribution<float> uniform(0.0f, (float)w);   // t_i από [0, w)
-    
-    v.assign(L,vector<vector<float>>(k,vector<float>(dim)));
-    t.assign(L,vector<float>(k));
+    default_random_engine generator(seed);
+    normal_distribution<double> normal_dist(0.0,1.0);
+    uniform_real_distribution<double> uniform_dist(0.0, w);
 
-    hash_tables.assign(L, unordered_map<int, vector<int>>());
+    randomvectors.resize(L);
+    randomshifts.resize(L);
 
-    for(int l=0; l < L ; l++){
-        // Τυχαία αρχικοποίηση v και t
-        for(int i = 0 ; i < k ; i++){
-            for(int d = 0 ; d < dim ; d++){
-                  v[l][i][d] = normal(gen);  // Δημιουργία τυχαίου διανύσματος v διάστασης 128(SIFT)
+    for(int i=0; i<L ; i++){
+        randomvectors[i].resize(k);
+        randomshifts[i].resize(k);
+
+        for(int j=0; j<k ; j++){
+            randomvectors[i][j].resize(dimension);  // Δημιουργία τυχαίου διανύσματος v διάστασης 178(SIFT)
+            for(int dim = 0 ; dim < dimension ; dim++){
+                randomvectors[i][j][dim] = normal_dist(generator);
             }
-
-        t[l][i]= uniform(gen);  // Δημιουργία τυχαίου διανύσματος t διάστασης 128(SIFT)
+            randomshifts[i][j] = uniform_dist(generator);  // Δημιουργία τυχαίου διανύσματος t διάστασης 178(SIFT)
         }
     }
-}   
-
-
-int lsh:: hi(const vector<float>& p,const vector<float>& v_i,float t_i){
-	double dot=0.0;
-
-    for(size_t j=0; j < p.size() ; j++){
-        dot += (double)p[j]*(double)v_i[j];
-    }
-    cout << dot << endl;
-	return  static_cast<int>(floor((dot + t_i) /w));
 }
 
-int lsh:: compute_g(const vector<float>& p,int l){
-    int g=0;
-    for(int i=0 ; i< k ; i++){
-        int h = hi(p,v[l][i],t[l][i]);
-        g = g * 31 + h;
+
+uint64_t lsh:: CreateHFun(const vector<double>& point, int tableIndex){
+    int sum =0;
+     
+    for (int i=0; i<k; i++){
+        double dot_product =0;
+        // cout << randomvectors[tableIndex][i] << endl;
+        for(int dim = 0 ; dim < dimension ; dim++){
+
+            dot_product += randomvectors[tableIndex][i][dim]*point[i];
+
+            double dot_product =0.0;
+
+            cout << tableIndex << "  " << randomvectors.size() << endl;
+
+            for(int dim = 0 ; dim < tableIndex ; dim++){
+
+                cout << randomvectors[tableIndex][i][dim] << "  "  << point[dim] << "  " << endl;     
+
+                dot_product += randomvectors[tableIndex][i][dim]*point[dim];
+
+            // cout << "aaa   " << dot_product<< endl;
+            } 
+
+            if(dot_product > INT_MAX || dot_product < INT_MIN){
+                cout<<"Overflow"<<endl;
+                exit(EXIT_FAILURE);
+            }
+
+            cout << randomshifts[tableIndex][i] << "  " << dot_product  << endl;
+            double numerator = dot_product + randomshifts[tableIndex][i];
+
+            cout << numerator << endl;
+
+            sum = floor( (double) (numerator) / w);
+            cout << sum <<endl;
+            return sum;
+             
+            
+        }
     }
-    return g;
+}
+
+//Δημιουργία hash tables
+
+void lsh:: CreateHashTables(){
+
+    cout<<"Create L:"<< L << "HashTables" <<endl;
+
+    hashTables.resize(L);
+
+
+    // for(int i =0 ; i < L; i++){
+    //     for(int j =0 ; j < tzset.size(); j++){
+    //         uint64_t hashV = CreateHFun(dataset[j],i);
+    //         hashTables[i][j].push_back(j);
+    //     }    
+    // }
 }
 
 void lsh::lsh_func(){
 
     cout<<"LSH Algorithm" <<endl;
-
-    cout<<"Create L:"<< L << "HashTables" <<endl;
-
-    if(dataset.empty()){
-        int dim = dimension;
-        int num_points = 100;
-        mt19937 gen(seed);
-        uniform_real_distribution<float> dist(0.0f,1.0f);
-        dataset.resize(num_points,vector<float>(dim));
-
-        for(auto &p :dataset){
-            for(float &x : p){
-                x = dist(gen);
-            }
-        }
-    }
-
-    for(size_t idx = 0 ; idx < 2 ; idx++){ //dataset.size()
-        const auto &p = dataset[idx];
-
-        for(int l = 0 ; l < L ; l++){
-            int g = compute_g(p,l);
-            hash_tables[l][g].push_back(idx);
-        }
-    }
-    cout<<"Sucessful Crate HashTables"<<endl;
+    CreateHFun({1,2}, 2);
+    //Initialize();
+    //CreateHashTables();
 }
 
 void lsh:: print_params() {
-    std::cout << "\n=== LSH PARAMETERS ===\n"
-              << "input_file: " << input_file << "\n"
+    std::cout << "input_file: " << input_file << "\n"
               << "query_file: " << query_file << "\n"
               << "output_file: " << output_file << "\n"
               << "k: " << k << ", L: " << L << ", w: " << w << ", N: " << N << ", R: " << R << "\n"

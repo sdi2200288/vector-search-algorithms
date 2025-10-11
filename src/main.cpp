@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
         LSH.print_params();
         LSH.Initialize();
         LSH.lsh_func();
-        LSH.hi( {1, 5 },{2,3},1);
+        // LSH.hi( {1, 5 },{2,3},1);
     }
     else if (use_hypercube) {
         cout << "\n>>> Running Hypercube Algorithm...\n";

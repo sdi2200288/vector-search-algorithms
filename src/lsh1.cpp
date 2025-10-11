@@ -1,115 +1,12 @@
-#include <iostream>
-#include <cstring>
-#include "../include/lsh.hpp"
-using namespace std;
-
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        cerr << "Usage example:\n"
-             << "./search -d input.dat -q query.dat -k 4 -L 5 -w 4.0 "
-             << "-o output.txt -N 1 -R 2000 -type mnist -range true -lsh\n";
-        return 1;
-    }
-
-    string input_file, query_file, output_file, type;
-    int k = 4, L = 5, N = 1, seed = 1;
-    double w = 4.0, R = 2000.0;
-    bool range = false;
-
-    // Flags για ποιον αλγόριθμο θα τρέξει
-    bool use_lsh = false;
-    bool use_hypercube = false;
-    bool use_ivfflat = false;
-
-    for (int i = 1; i < argc; ++i) {
-        string arg = argv[i];
-
-        if (arg == "-d") input_file = argv[++i];
-        else if (arg == "-q") query_file = argv[++i];
-        else if (arg == "-o") output_file = argv[++i];
-        else if (arg == "-k") k = stoi(argv[++i]);
-        else if (arg == "-L") L = stoi(argv[++i]);
-        else if (arg == "-w") w = stod(argv[++i]);
-        else if (arg == "-N") N = stoi(argv[++i]);
-        else if (arg == "-R") R = stod(argv[++i]);
-        else if (arg == "-type") type = argv[++i];
-        else if (arg == "-range") {
-            string s = argv[++i];
-            range = (s == "true");
-        }
-        //έλεγχος ποιο flag δόθηκε
-        else if (arg == "-lsh") use_lsh = true;
-        else if (arg == "-hypercube") use_hypercube = true;
-        else if (arg == "-ivfflat") use_ivfflat = true;
-    }
-
-    if (use_lsh) {
-        cout << "\n>>> Running LSH Algorithm...\n";
-        lsh LSH(seed, input_file, query_file, output_file, k, L, w, N, R, type, range);
-        LSH.print_params();
-        LSH.lsh_func();
-    }
-    else if (use_hypercube) {
-        cout << "\n>>> Running Hypercube Algorithm...\n";
-    }
-    else if (use_ivfflat) {
-        cout << "\n>>> Running IVFFlat Algorithm...\n";
-    }
-    else {
-        cerr << "Error: You must specify an algorithm flag (-lsh, -hypercube, or -ivfflat)\n";
-    }
-
-    return 0;
-}
- //lsh.hpp
-
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <random>
-#include <string>
-#include <functional>
-
-using namespace std;
-
-class lsh{
-    private:
-        std::string input_file, query_file, output_file, type;
-        int k, L, N, seed;
-        double w, R;
-        bool range;
-        double * v;
-        double t;
-
-        int dimension; //178 ή 784
-
-        
-
-    public:
-        lsh(int seed1, string input_file1, string query_file1, string output_file1, int k1, int L1, float w1, int N1, float R1, std::string type1, bool range1);
-        ~lsh();
-       
-        void lsh_func();
-
-        void Initialize();
-        void CreateHashTables();
-        void print_params();
-};
-
 //LSH ALGORITHM
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include <string>
 #include <cmath>
 #include <random>
-#include <climits>
-#include <cstdio>
-#include <cstdlib>
-#include "../include/lsh.hpp"
-#include "../include/mnist_data.hpp"
-#include "../include/sift_data.hpp"
+#include <vector>
+#include <string>
 
+#include "../include/lsh1.hpp"
 
 using namespace std;
 lsh :: lsh(int seed1, string input_file1, string query_file1, string output_file1, int k1, int L1, float w1, int N1, float R1, string type1, bool range1){
@@ -125,7 +22,9 @@ lsh :: lsh(int seed1, string input_file1, string query_file1, string output_file
     type = type1;
     range = range1;
 
-    dimension = (type == "mnist") ? 784 : 128;
+    // Ορισμός διάστασης βάσει τύπου
+    if (type == "mnist") dimension = 784;
+    else dimension = 128; // SIFT default
 
     cout << "LSH Constructed!" << endl;
 }
@@ -133,4 +32,90 @@ lsh :: lsh(int seed1, string input_file1, string query_file1, string output_file
 lsh :: ~lsh(){
     cout << "LSH Deconstructed!" << endl;
 }
-                                                               
+
+void lsh:: Initialize(){
+    cout<<"Initialize v and t"<<endl;
+    
+    int dim = dimension;
+
+    mt19937 gen(seed);
+    normal_distribution<float> normal(0.0f,1.0f);         // v_i από Ν(0,1)
+    uniform_real_distribution<float> uniform(0.0f, (float)w);   // t_i από [0, w)
+    
+    v.assign(L,vector<vector<float>>(k,vector<float>(dim)));
+    t.assign(L,vector<float>(k));
+
+    hash_tables.assign(L, unordered_map<int, vector<int>>());
+
+    for(int l=0; l < L ; l++){
+        // Τυχαία αρχικοποίηση v και t
+        for(int i = 0 ; i < k ; i++){
+            for(int d = 0 ; d < dim ; d++){
+                  v[l][i][d] = normal(gen);  // Δημιουργία τυχαίου διανύσματος v διάστασης 128(SIFT)
+            }
+
+        t[l][i]= uniform(gen);  // Δημιουργία τυχαίου διανύσματος t διάστασης 128(SIFT)
+        }
+    }
+}   
+
+
+int lsh:: hi(const vector<float>& p,const vector<float>& v_i,float t_i){
+	double dot=0.0;
+
+    for(size_t j=0; j < p.size() ; j++){
+        dot += (double)p[j]*(double)v_i[j];
+    }
+    cout << dot << endl;
+	return  static_cast<int>(floor((dot + t_i) /w));
+}
+
+int lsh:: compute_g(const vector<float>& p,int l){
+    int g=0;
+    for(int i=0 ; i< k ; i++){
+        int h = hi(p,v[l][i],t[l][i]);
+        g = g * 31 + h;
+    }
+    return g;
+}
+
+void lsh::lsh_func(){
+
+    cout<<"LSH Algorithm" <<endl;
+
+    cout<<"Create L:"<< L << "HashTables" <<endl;
+
+    if(dataset.empty()){
+        int dim = dimension;
+        int num_points = 100;
+        mt19937 gen(seed);
+        uniform_real_distribution<float> dist(0.0f,1.0f);
+        dataset.resize(num_points,vector<float>(dim));
+
+        for(auto &p :dataset){
+            for(float &x : p){
+                x = dist(gen);
+            }
+        }
+    }
+
+    for(size_t idx = 0 ; idx < 2 ; idx++){ //dataset.size()
+        const auto &p = dataset[idx];
+
+        for(int l = 0 ; l < L ; l++){
+            int g = compute_g(p,l);
+            hash_tables[l][g].push_back(idx);
+        }
+    }
+    cout<<"Sucessful Crate HashTables"<<endl;
+}
+
+void lsh:: print_params() {
+    std::cout << "\n=== LSH PARAMETERS ===\n"
+              << "input_file: " << input_file << "\n"
+              << "query_file: " << query_file << "\n"
+              << "output_file: " << output_file << "\n"
+              << "k: " << k << ", L: " << L << ", w: " << w << ", N: " << N << ", R: " << R << "\n"
+              << "type: " << type << "\n"
+              << "range: " << boolalpha << range << "\n";
+}
