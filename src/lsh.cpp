@@ -131,57 +131,50 @@ void lsh:: Initialize(){
         t[l][i]= uniform(gen);  // Δημιουργία τυχαίου διανύσματος t διάστασης 128(SIFT)
         }
     }
-}   
 
-
-int lsh:: hi(const vector<float>& p,const vector<float>& v_i,float t_i){
-	double dot=0.0;
-
-    for(size_t j=0; j < p.size() ; j++){
-        dot += (double)p[j]*(double)v_i[j];
-    }
- 
-	return  static_cast<int>(floor((dot + t_i) /w));
 }
 
-int lsh:: compute_g(const vector<float>& p,int l){
-    int g=0;
-    for(int i=0 ; i< k ; i++){
-        int h = hi(p,v[l][i],t[l][i]);
-        g = g * 31 + h;
+uint64_t lsh:: CreateHFun(const vector<double>& point, int tableIndex){
+    int sum =0;
+    
+    for (int i=0; i<k; i++){
+        double dot_product =0;
+        for(int dim = 0 ; dim < dimension ; dim++){
+            dot_product += randomvectors[tableIndex][i][dim]*point[i];
+        } 
+
+        if(dot_product > INT_MAX || dot_product < INT_MIN){
+            cout<<"Overflow"<<endl;
+            exit(EXIT_FAILURE);
+        }
+        double numerator = dot_product + randomshifts[tableIndex][i];
+     
+        cout<< w <<endl;
+        return sum = floor( (double) (numerator) / w);
     }
-    return g;
 }
 
-void lsh::lsh_func(){
+//Δημιουργία hash tables
+void lsh:: CreateHashTables(){
+    cout<<"Create L:"<< L << "HashTables" <<endl;
+
+    hashTables.resize(L);
+
+    // for(int i =0 ; i < L; i++){
+    //     for(int j =0 ; j < tzset.size(); j++){
+    //         uint64_t hashV = CreateHFun(dataset[j],i);
+    //         hashTables[i][j].push_back(j);
+    //     }    
+    // }
+}
+
+void lsh_func(){
 
     cout<<"LSH Algorithm" <<endl;
 
-    cout<<"Create L:"<< L << "HashTables" <<endl;
-
-    if(dataset.empty()){
-        int dim = dimension;
-        int num_points = 100;
-        mt19937 gen(seed);
-        uniform_real_distribution<float> dist(0.0f,1.0f);
-        dataset.resize(num_points,vector<float>(dim));
-
-        for(auto &p :dataset){
-            for(float &x : p){
-                x = dist(gen);
-            }
-        }
-    }
-
-    for(size_t idx = 0 ; idx < dataset.size() ; idx++){
-        const auto &p = dataset[idx];
-
-        for(int l = 0 ; l < L ; l++){
-            int g = compute_g(p,l);
-            hash_tables[l][g].push_back(idx);
-        }
-    }
-    cout<<"Sucessful Crate HashTables"<<endl;
+    //Initialize();
+    //CreateHashTables();
+    
 }
 
 void lsh:: print_params() {
