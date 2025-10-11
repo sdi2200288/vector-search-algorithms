@@ -66,7 +66,7 @@ int lsh:: hi(const vector<float>& p,const vector<float>& v_i,float t_i){
     for(size_t j=0; j < p.size() ; j++){
         dot += (double)p[j]*(double)v_i[j];
     }
- 
+    cout << dot << endl;
 	return  static_cast<int>(floor((dot + t_i) /w));
 }
 
@@ -99,7 +99,7 @@ void lsh::lsh_func(){
         }
     }
 
-    for(size_t idx = 0 ; idx < dataset.size() ; idx++){
+    for(size_t idx = 0 ; idx < 2 ; idx++){ //dataset.size()
         const auto &p = dataset[idx];
 
         for(int l = 0 ; l < L ; l++){

@@ -49,8 +49,8 @@ vector<vector<float>> read_sift_file(const string& filename){
 // }
 
 vector<float> return_sift_data(){
-    auto sift_data = read_sift_file("sift_data/sift_base.fvecs");
-    auto sift_queries = read_sift_file("sift_data/sift_query.fvecs");
+    auto sift_data = read_sift_file("../../sift_data/sift_base.fvecs");
+    auto sift_queries = read_sift_file("../../sift_data/sift_query.fvecs");
     
     cout << "SIFT base: " << sift_data.size() << " × " << sift_data[0].size() << endl;
     cout << "SIFT queries: " << sift_queries.size() << " × " << sift_queries[0].size() << endl;

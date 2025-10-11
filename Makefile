@@ -39,7 +39,7 @@ CXXFLAGS = -Wall -g -std=c++17 -Iinclude
 TARGET = search
 
 # Source files (όλα τα .cpp μέσα στο src)
-SRCS = $(wildcard src/main.cpp src/lsh.cpp src/mnist_data.cpp src/sift_data.cpp)
+SRCS = $(wildcard src/main.cpp src/lsh.cpp) #src/mnist_data.cpp src/sift_data.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Default target
@@ -59,6 +59,6 @@ run:
 
 # Clean
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) src/mnist_data.o src/sift_data.o src/main1
 
 .PHONY: all run clean

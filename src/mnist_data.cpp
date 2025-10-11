@@ -64,7 +64,7 @@ vector<vector<float>> read_mnist_file(const string& filename, int expected_image
 // }
 
 vector<float> return_mnist_data(){
-    auto mnist_data = read_mnist_file("mnist_data/train-images-idx3-ubyte");
+    auto mnist_data = read_mnist_file("../../mnist_data/train-images-idx3-ubyte");
     cout << "MNIST: " << mnist_data.size() << " × " << mnist_data[0].size() << endl;
 
     // cout << "\nΠρώτο MNIST διάνυσμα (πρώτα 20 στοιχεία): ";
