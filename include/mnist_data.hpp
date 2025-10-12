@@ -72,7 +72,7 @@ vector<vector<float>> read_mnist_file(const string& filename, int expected_image
 vector<vector<float>> return_mnist_data() {
     // Βεβαιώσου ότι αυτή η συνάρτηση ΔΕΝ κάνει double free
     // ή δεν επιστρέφει reference σε τοπικό αντικείμενο
-    auto mnist_data = read_mnist_file("../../mnist_data/train-images-idx3-ubyte");
+    auto mnist_data = read_mnist_file("../mnist_data/train-images-idx3-ubyte");
     // vector<vector<float>> mnist_data;
     
     

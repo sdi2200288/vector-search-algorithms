@@ -55,7 +55,7 @@ $(TARGET): $(OBJS)
 
 # Run
 run:
-	./$(TARGET) -d input.dat -q query.dat -k 4 -L 5 -w 4.0 -o output.txt -N 1 -R 2000 -type mnist -range true -lsh
+	./$(TARGET) -d input.dat -q query.dat -k 4 -L 5 -w 4.0 -o output.txt -N 1 -R 2000 -type sift -range true -lsh
 
 # Clean
 clean:

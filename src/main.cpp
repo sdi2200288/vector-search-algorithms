@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstring>
 #include "../include/lsh.hpp"
+#include "../include/sift_data.hpp"
+#include "../include/mnist_data.hpp"
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -45,11 +47,39 @@ int main(int argc, char *argv[]) {
 
     if (use_lsh) {
         cout << "\n>>> Running LSH Algorithm...\n";
+
+        vector<vector<double>> dataset;
+        
+        if(type == "mnist"){
+            cout << "MNIST: " << endl;
+            vector<vector<float>> float_data = return_mnist_data();
+            dataset.resize(float_data.size());
+            for(size_t i = 0; i < float_data.size(); i++) {
+                dataset[i].assign(float_data[i].begin(), float_data[i].end());
+            }
+        }else if(type == "sift"){
+            cout << "SIFT: " << endl;
+            vector<vector<float>> float_data = return_sift_data();
+            dataset.resize(float_data.size());
+            for(size_t i = 0; i < float_data.size(); i++) {
+                dataset[i].assign(float_data[i].begin(), float_data[i].end());
+            }
+        }
+        else{
+            cerr<<"Unkown type"<<endl;
+            return 1;
+        }
+
+        // Έλεγχος data
+         if(!dataset.empty()){
+            cout << "Data size: " << dataset.size() << " vectors x " << dataset[0].size() << " dimensions" << endl;
+         }
+
         lsh LSH(seed, input_file, query_file, output_file, k, L, w, N, R, type, range);
         LSH.print_params();
-        LSH.Initialize();
-        LSH.lsh_func();
-        // LSH.hi( {1, 5 },{2,3},1);
+        //LSH.Initialize(dataset.size());
+        LSH.lsh_func(dataset);
+        //LSH.lsh_func( {1, 5 },{2,3},1);
     }
     else if (use_hypercube) {
         cout << "\n>>> Running Hypercube Algorithm...\n";

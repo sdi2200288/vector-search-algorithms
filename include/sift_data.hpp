@@ -22,8 +22,8 @@
 
 using namespace std;
 
-vector<vector<float>> read_sift_file(const string& filename);
-vector<vector<float>> return_sift_data();
+//vector<vector<float>> read_sift_file(const string& filename);
+//vector<vector<float>> return_sift_data();
 
 vector<vector<float>> read_sift_file(const string& filename) {
     ifstream file(filename, ios::binary);
@@ -61,7 +61,7 @@ vector<vector<float>> read_sift_file(const string& filename) {
 }
 
 vector<vector<float>> return_sift_data() {
-    return read_sift_file("../../sift_data/sift_base.fvecs");
+    return read_sift_file("../sift_data/sift_base.fvecs");
 }
 
 #endif
