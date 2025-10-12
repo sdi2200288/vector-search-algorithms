@@ -81,4 +81,12 @@ vector<vector<float>> return_mnist_data() {
     return mnist_data; // Επιστροφή αντιγράφου - ασφαλές
 }
 
+vector<vector<float>> read_mnist_query(const string& filename) {
+    return read_mnist_file(filename);
+}
+
+vector<vector<float>> return_mnist_queries(){
+    return read_mnist_query("../sift_data/sift_query.fvecs");
+}
+
 #endif
