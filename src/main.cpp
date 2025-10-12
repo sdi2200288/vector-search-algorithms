@@ -13,40 +13,53 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    string input_file, query_file, output_file, type;
-    int k = 4, L = 5, N = 1, seed = 1;
-    double w = 4.0, R = 2000.0;
-    bool range = false;
-
     // Flags για ποιον αλγόριθμο θα τρέξει
     bool use_lsh = false;
     bool use_hypercube = false;
     bool use_ivfflat = false;
 
-    for (int i = 1; i < argc; ++i) {
+    for(int i=0; i<argc; i++){
         string arg = argv[i];
-
-        if (arg == "-d") input_file = argv[++i];
-        else if (arg == "-q") query_file = argv[++i];
-        else if (arg == "-o") output_file = argv[++i];
-        else if (arg == "-k") k = stoi(argv[++i]);
-        else if (arg == "-L") L = stoi(argv[++i]);
-        else if (arg == "-w") w = stod(argv[++i]);
-        else if (arg == "-N") N = stoi(argv[++i]);
-        else if (arg == "-R") R = stod(argv[++i]);
-        else if (arg == "-type") type = argv[++i];
-        else if (arg == "-range") {
-            string s = argv[++i];
-            range = (s == "true");
+        if(arg == "-lsh"){
+            use_lsh = true;
+            break;
+        }        
+        else if(arg == "-hypercube"){
+            use_hypercube = true;
+            break;
         }
-        //έλεγχος ποιο flag δόθηκε
-        else if (arg == "-lsh") use_lsh = true;
-        else if (arg == "-hypercube") use_hypercube = true;
-        else if (arg == "-ivfflat") use_ivfflat = true;
+        else if(arg == "-ivfflat"){
+            use_ivfflat = true;
+            break;
+        }
     }
+
 
     if (use_lsh) {
         cout << "\n>>> Running LSH Algorithm...\n";
+
+        string input_file, query_file, output_file, type;
+        int k = 4, L = 5, N = 1, seed = 1;
+        double w = 4.0, R = 2000.0;
+        bool range = false;
+
+        for (int i = 1; i < argc; ++i) {
+            string arg = argv[i];
+
+            if (arg == "-d") input_file = argv[++i];
+            else if (arg == "-q") query_file = argv[++i];
+            else if (arg == "-o") output_file = argv[++i];
+            else if (arg == "-k") k = stoi(argv[++i]);
+            else if (arg == "-L") L = stoi(argv[++i]);
+            else if (arg == "-w") w = stod(argv[++i]);
+            else if (arg == "-N") N = stoi(argv[++i]);
+            else if (arg == "-R") R = stod(argv[++i]);
+            else if (arg == "-type") type = argv[++i];
+            else if (arg == "-range") {
+                string s = argv[++i];
+                range = (s == "true");
+            }
+        }
 
         vector<vector<double>> dataset;
         
