@@ -1,11 +1,13 @@
 #include <unistd.h>
-#include <iostream>
+// #include <iostream>
 #include <cstring>
+
+#include "hypercube.hpp"
 
 #include "../include/sift_data.hpp"
 #include "../include/mnist_data.hpp"
 
-using namespace std;
+// using namespace std;
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -37,7 +39,7 @@ int main(int argc, char *argv[]) {
     }
 
     string input_file, query_file, output_file, type;
-    int kproj = 4, M = 5, N = 1, probes = 1;
+    int kproj = 14, M = 10, N = 1, probes = 2, seed = 1;
     double w = 4.0, R = 2000.0;
     bool range = false;
 
@@ -60,6 +62,9 @@ int main(int argc, char *argv[]) {
                 range = (s == "true");
             }
         }
+
+        Hypercube Hypercube(seed, input_file, query_file, output_file, kproj, M, w, N, R, probes, type, range);
+        Hypercube.print_params();
     }
     else if (use_ivfflat) {
         cout << "\n>>> Running IVFFlat Algorithm...\n";

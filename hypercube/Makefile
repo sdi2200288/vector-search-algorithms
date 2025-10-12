@@ -6,7 +6,7 @@ CXXFLAGS = -Wall -g -std=c++17 -Iinclude
 TARGET = search
 
 # Source files (όλα τα .cpp μέσα στο src)
-SRCS = $(wildcard main2.cpp ) 
+SRCS = $(wildcard main2.cpp hypercube.cpp) 
 OBJS = $(SRCS:.cpp=.o)
 
 # Default target
