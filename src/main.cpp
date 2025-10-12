@@ -49,20 +49,34 @@ int main(int argc, char *argv[]) {
         cout << "\n>>> Running LSH Algorithm...\n";
 
         vector<vector<double>> dataset;
-        
+        vector<vector<double>> queries;
+       
         if(type == "mnist"){
             cout << "MNIST: " << endl;
             vector<vector<float>> float_data = return_mnist_data();
+            vector<vector<float>> float_queries = return_mnist_queries();
+            
             dataset.resize(float_data.size());
             for(size_t i = 0; i < float_data.size(); i++) {
                 dataset[i].assign(float_data[i].begin(), float_data[i].end());
             }
+            queries.resize(float_queries.size());
+            for(size_t i = 0; i < float_queries.size(); i++) {
+                queries[i].assign(float_queries[i].begin(), float_queries[i].end());
+            }
+            
         }else if(type == "sift"){
             cout << "SIFT: " << endl;
             vector<vector<float>> float_data = return_sift_data();
+            vector<vector<float>> float_queries = return_sift_queries();
+            
             dataset.resize(float_data.size());
             for(size_t i = 0; i < float_data.size(); i++) {
                 dataset[i].assign(float_data[i].begin(), float_data[i].end());
+            }
+            queries.resize(float_queries.size());
+            for(size_t i = 0; i < float_queries.size(); i++) {
+                queries[i].assign(float_queries[i].begin(), float_queries[i].end());
             }
         }
         else{
@@ -78,7 +92,7 @@ int main(int argc, char *argv[]) {
         lsh LSH(seed, input_file, query_file, output_file, k, L, w, N, R, type, range);
         LSH.print_params();
         //LSH.Initialize(dataset.size());
-        LSH.lsh_func(dataset);
+        LSH.lsh_func(dataset,queries);
         //LSH.lsh_func( {1, 5 },{2,3},1);
     }
     else if (use_hypercube) {
