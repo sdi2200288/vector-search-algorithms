@@ -39,8 +39,8 @@ int main(int argc, char *argv[]) {
         cout << "\n>>> Running LSH Algorithm...\n";
 
         string input_file, query_file, output_file, type;
-        int k = 4, L = 5, N = 1, seed = 1;
-        double w = 4.0, R = 2000.0;
+        int k = 10, L = 30, N = 5, seed = 1;
+        double w = 1.5, R = 150.0;
         bool range = false;
 
         for (int i = 1; i < argc; ++i) {
