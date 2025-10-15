@@ -50,8 +50,8 @@ class lsh{
         void Queries(const vector<vector<double>>& queries,const vector<vector<double>>& dataset);
         double euclidean_distance(const vector<double>& v1, const vector<double>& v2);
         vector<pair<int, double>> ANN(const vector<double>& query,const vector<vector<double>>& dataset,int N);
-        //vector<pair<int, double>> ENN(const vector<double>& query, const vector<vector<double>>& dataset, int N);
-        //vector<pair<int, double>> RangeSearch(const vector<double>& query, const vector<vector<double>>& dataset, int N);
-};
+        vector<pair<int, double>> ENN(const vector<double>& query, const vector<vector<double>>& dataset, int N);
+        //vector<int> Range_Search(const vector<double>& query, const vector<vector<double>>& dataset, const unordered_set<int>& candidates);
+    };
 
 #endif
