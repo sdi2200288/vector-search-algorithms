@@ -39,7 +39,7 @@ CXXFLAGS = -Wall -g -std=c++17 -Iinclude
 TARGET = search
 
 # Source files (όλα τα .cpp μέσα στο src)
-SRCS = $(wildcard src/main.cpp src/lsh.cpp) #src/mnist_data.cpp src/sift_data.cpp
+SRCS = $(wildcard src/main.cpp src/lsh.cpp src/sift_data.cpp) #src/mnist_data.cpp 
 OBJS = $(SRCS:.cpp=.o)
 
 # Default target
@@ -55,7 +55,7 @@ $(TARGET): $(OBJS)
 
 # Run
 run:
-	./$(TARGET) -d input.dat -q query.dat -k 4 -L 5 -w 4.0 -o output.txt -N 1 -R 2000 -type sift -range true -lsh
+	./$(TARGET) -d input.dat -q query.dat -k 10 -L 30 -w 1.5 -o output.txt -N 5 -R 150.0 -type sift -range true -lsh
 
 # Clean
 clean:
