@@ -13,7 +13,8 @@ class Hypercube{
         bool range;
 
     public:
-        Hypercube(int seed1, string input_file1, string query_file1, string output_file1, int kproj1, int M1, double w1, int N1, double R1, int probes1, string type1, bool range1);
+        Hypercube(int seed1, string input_file1, string query_file1, string output_file1, int kproj1, 
+            int M1, double w1, int N1, double R1, int probes1, string type1, bool range1);
         ~Hypercube();
         void print_params();
 
