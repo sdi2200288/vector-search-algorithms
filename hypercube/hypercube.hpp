@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <utility>      //για το pair
 
 using namespace std;
 
@@ -20,6 +21,9 @@ class Hypercube{
 
         vector<vector<double>> dataset_reference;   //αποθήκευση dataset για queries
 
+        
+        double euclidean_distance(const vector<double>& v1, const vector<double>& v2);                       //υπολογίζει την Ευκλείδεια απόσταση μεταξύ δύο διανυσμάτων
+
     public:
         Hypercube(int seed1, string input_file1, string query_file1, string output_file1, int kproj1, 
             int M1, double w1, int N1, double R1, int probes1, string type1, bool range1);
@@ -35,7 +39,15 @@ class Hypercube{
         string project_to_hypercube(const vector<vector<double>>& dataset, const vector<double>& point);
         void build_index(const vector<vector<double>>& dataset);
         
+        vector<string> vertices_at_hamming_dist(const string& vertex, int target_dist, int max_vertices);     //βρίσκει όλες τις κορυφές με συγκεκριμένη Hamming απόσταση από μια κορυφή
 
+        vector<pair<int, double>> exact_nearest_neighbors(const vector<double>& query);
+        vector<pair<int, double>> approximate_nearest_neighbors(const vector<double>& query);
+        vector<int> approximate_range_search(const vector<double>& query);
+        vector<int> exact_range_search(const vector<double>& query);
+
+        void Queries(const vector<vector<double>>& queries,const vector<vector<double>>& dataset);
+        void hypercube_func(const vector<vector<double>>& dataset,const vector<vector<double>>& queries);
 };
 
 #endif

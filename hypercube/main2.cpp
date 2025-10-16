@@ -3,6 +3,8 @@
 #include <cstring>
 
 #include "hypercube.hpp"
+#include "../include/sift_data.hpp"
+#include "../include/mnist_data.hpp"
 
 
 // using namespace std;
@@ -61,40 +63,65 @@ int main(int argc, char *argv[]) {
             else if(type == "sift") R = 2.0;
         }
 
-        Hypercube Hypercube(seed, input_file, query_file, output_file, kproj, M, w, N, R, probes, type, range);
-        Hypercube.print_params();
+        vector<vector<double>> dataset;
+        vector<vector<double>> queries;
+       
+        if(type == "mnist"){
+            cout << "MNIST: " << endl;
+            vector<vector<float>> float_data = return_mnist_data();
+            vector<vector<float>> float_queries = return_mnist_queries();
+            
+            dataset.resize(float_data.size());
+            for(size_t i = 0; i < float_data.size(); i++) {
+                dataset[i].assign(float_data[i].begin(), float_data[i].end());
+            }
+            queries.resize(float_queries.size());
+            for(size_t i = 0; i < float_queries.size(); i++) {
+                queries[i].assign(float_queries[i].begin(), float_queries[i].end());
+            }
+            
+        }
+        else if(type == "sift"){
+            cout << "SIFT: " << endl;
+            vector<vector<float>> float_data = return_sift_data();
+            vector<vector<float>> float_queries = return_sift_queries();
+            
+            dataset.resize(float_data.size());
+            for(size_t i = 0; i < float_data.size(); i++) {
+                dataset[i].assign(float_data[i].begin(), float_data[i].end());
+            }
+            queries.resize(float_queries.size());
+            for(size_t i = 0; i < float_queries.size(); i++) {
+                queries[i].assign(float_queries[i].begin(), float_queries[i].end());
+            }
+        }
+        else{
+            cerr<<"Unkown type"<<endl;
+            return 1;
+        }
+
+        // Έλεγχος data
+         if(!dataset.empty()){
+            cout << "Data size: " << dataset.size() << " vectors x " << dataset[0].size() << " dimensions" << endl;
+         }
+
+        Hypercube hypercube(seed, input_file, query_file, output_file, kproj, M, w, N, R, probes, type, range);
+        hypercube.print_params();
         cout << endl;
 
-        vector<vector<double>> test_dataset = {{1.0, 2.0, 0.5, 1.5, 2.5, 0.1, 1.8, 2.2, 0.8, 1.2}, {2.0, 3.0, 1.5, 2.5, 3.5, 1.1, 2.8, 3.2, 1.8, 2.2}};
-        vector<double> test_point = {1.0, 2.0, 0.5, 1.5, 2.5, 0.1, 1.8, 2.2, 0.8, 1.2};
 
-        int dim = Hypercube.hypercube_dimension(test_dataset, kproj);  
-        cout << "dim : " << dim << endl; 
+        // vector<vector<double>> test_dataset = {
+        //     {1.0, 2.0, 0.5, 1.5, 2.5, 0.1, 1.8, 2.2, 0.8, 1.2},
+        //     {2.0, 3.0, 1.5, 2.5, 3.5, 1.1, 2.8, 3.2, 1.8, 2.2},
+        //     {0.5, 1.0, 0.2, 0.8, 1.2, 0.05, 0.9, 1.1, 0.4, 0.6},
+        //     {3.0, 4.0, 2.5, 3.5, 4.5, 2.1, 3.8, 4.2, 2.8, 3.2}
+        // };
+        // vector<vector<double>> test_query = {{1.0, 2.0, 0.5, 1.5, 2.5, 0.1, 1.8, 2.2, 0.8, 1.2}, {3.0, 4.0, 2.5, 3.5, 4.5, 2.1, 3.8, 4.2, 2.8, 3.2}};
+        hypercube.build_index(dataset);
+        // hypercube.Queries(queries, dataset);
+        // cout << "aaaaaaa" << endl;
+        hypercube.hypercube_func(dataset, queries);
 
-        //δημιουργία index
-        Hypercube.build_index(test_dataset);
-
-        //test για προβολης για ενα σημειο
-        string vertex = Hypercube.project_to_hypercube(test_dataset, test_point);
-        cout << "First point projects to vertex: " << vertex << endl;
-
-        //test υπολογισμού διάστασης
-        int dim1 = Hypercube.hypercube_dimension(test_dataset, kproj);
-        cout << "Computed hypercube dimension: " << dim1 << endl;
-
-        //δοκιμή ότι δουλεύει σωστά:
-        cout << "Index built successfully!" << endl;
-        cout << "Stored points in hypercube: " << Hypercube.get_h_map().size() << " vertices" << endl;
-        cout << "Dataset reference stored: " << Hypercube.get_dataset_reference().size() << " points" << endl;
-
-        //έλεγχος ότι τα δεδομένα είναι προσβάσιμα:
-        if (!Hypercube.get_dataset_reference().empty()) {
-            cout << "First point in dataset: ";
-            for (auto val : Hypercube.get_dataset_reference()[0]) {
-                cout << val << " ";
-            }
-            cout << endl;
-        }
     }
     else if (use_ivfflat) {
         cout << "\n>>> Running IVFFlat Algorithm...\n";

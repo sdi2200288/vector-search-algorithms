@@ -114,7 +114,7 @@ std::vector<std::vector<float>> read_sift_file(const std::string& filename) {
 }
 
 std::vector<std::vector<float>> return_sift_data() {
-    return read_sift_file("../sift_data/sift_base.fvecs");
+    return read_sift_file("../../sift/sift_base.fvecs");
 }
 
 std::vector<std::vector<float>> read_sift_query(const std::string& filename) {
@@ -122,7 +122,7 @@ std::vector<std::vector<float>> read_sift_query(const std::string& filename) {
 }
 
 std::vector<std::vector<float>> return_sift_queries() {
-    return read_sift_query("../sift_data/sift_query.fvecs");
+    return read_sift_query("../../sift/sift_query.fvecs");
 }
 
 

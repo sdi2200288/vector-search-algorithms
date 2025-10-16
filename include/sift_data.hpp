@@ -61,7 +61,7 @@ vector<vector<float>> read_sift_file(const string& filename) {
 }
 
 vector<vector<float>> return_sift_data() {
-    return read_sift_file("../sift_data/sift_base.fvecs");
+    return read_sift_file("../../sift/sift_base.fvecs");
 }
 
 vector<vector<float>> read_sift_query(const string& filename) {
@@ -69,6 +69,6 @@ vector<vector<float>> read_sift_query(const string& filename) {
 }
 
 vector<vector<float>> return_sift_queries(){
-    return read_sift_query("../sift_data/sift_query.fvecs");
+    return read_sift_query("../../sift/sift_query.fvecs");
 }
 #endif
