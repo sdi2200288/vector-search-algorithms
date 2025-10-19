@@ -73,7 +73,7 @@ void IVFFlat :: print_params() {
     std::cout << "input_file: " << input_file << "\n"
               << "query_file: " << query_file << "\n"
               << "output_file: " << output_file << "\n"
-              << "kproj: " << kproj << ", M: " << M << ", w: " << w << ", N: " << N << ", R: " << R << ", probes: " << probes << "\n"
+              << "kclusters : " << kclusters  << ", N: " << N << ", R: " << R << ", nprobe: " << nprobe << "\n"
               << "type: " << type << "\n"
               << "range: " << boolalpha << range << "\n";
 }

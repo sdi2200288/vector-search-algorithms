@@ -2,7 +2,7 @@
 // #include <iostream>
 #include <cstring>
 
-#include "hypercube.hpp"
+#include "IVFFlat.hpp"
 #include "../include/sift_data.hpp"
 #include "../include/mnist_data.hpp"
 
@@ -34,8 +34,8 @@ int main(int argc, char *argv[]) {
     }
 
     string input_file, query_file, output_file, type;
-    int kproj = 14, M = 10, N = 1, probes = 2, seed = 1;
-    double w = 4.0, R;
+    int kclusters = 14, N = 1, nprobe = 2, seed = 1;
+    double R;
     bool range = false, R_flag = false;
 
     if(use_ivfflat){
@@ -44,10 +44,8 @@ int main(int argc, char *argv[]) {
             string arg = argv[i];
             if(arg == "-d") input_file = argv[++i];
             else if(arg == "-q") query_file = argv[++i];
-            else if(arg == "-kproj") kproj = stoi(argv[++i]);
-            else if(arg == "-w") w = stod(argv[++i]);
-            else if(arg == "-M") M = stoi(argv[++i]);
-            else if(arg == "-probes") probes = stoi(argv[++i]); 
+            else if(arg == "-kclusters") kclusters = stoi(argv[++i]);
+            else if(arg == "-nprobe") nprobe = stoi(argv[++i]); 
             else if(arg == "-o") output_file = argv[++i];
             else if(arg == "-N") N = stoi(argv[++i]);
             else if(arg == "-R"){ R_flag = true; R = stod(argv[++i]);}
