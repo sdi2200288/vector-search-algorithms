@@ -3,8 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <iostream>
-
 using namespace std;
 
 vector<vector<float>> read_sift_file(const string& filename);

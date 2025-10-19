@@ -1,110 +1,36 @@
-// #include <iostream>
-// #include <fstream>
-// #include "../include/sift_data.hpp"
-// // #include <vector>
-// // #include <string>
-// // using namespace std;
-
-// // =============================================================
-// // 📘 SIFT Loader (fvecs format - Little Endian, float32)
-// // =============================================================
-// vector<vector<float>> read_sift_file(const string& filename){
-//     ifstream file(filename, ios::binary);
-//     if (!file.is_open()) {
-//         cerr << "❌ Error: Cannot open file " << filename << endl;
-//         exit(1);
-//     }
-
-//     vector<vector<float>> data;
-//     int d = 0; // dimension (should be 128)
-
-//     while (file.read((char*)&d, sizeof(int))) {
-//         if (d != 128) {
-//             cerr << "⚠️ Unexpected dimension value: " << d << " (expected 128)" << endl;
-//             break;
-//         }
-
-//         vector<float> vec(d);
-//         file.read((char*)vec.data(), d * sizeof(float));
-//         if (!file) break;
-//         data.push_back(vec);
-//     }
-
-//     cout << "✅ Loaded " << data.size() << " SIFT vectors of dimension "
-//          << (data.empty() ? 0 : data[0].size()) << endl;
-//     return data;
-// }
-
-// // int main() {
-// //     auto sift_data = read_sift_file("sift_data/sift_base.fvecs");
-// //     auto sift_queries = read_sift_file("sift_data/sift_query.fvecs");
-    
-// //     cout << "SIFT base: " << sift_data.size() << " × " << sift_data[0].size() << endl;
-// //     cout << "SIFT queries: " << sift_queries.size() << " × " << sift_queries[0].size() << endl;
-
-// //     cout << "\nΠρώτο SIFT διάνυσμα (πρώτα 10 στοιχεία): ";
-// //     for (int i = 0; i < 128; ++i)
-// //         cout << sift_data[0][i] << " ";
-// //     cout << endl;
-// // }
-
-// vector<vector<float>> return_sift_data(){
-//     auto sift_data = read_sift_file("../../sift_data/sift_base.fvecs");
-//     auto sift_queries = read_sift_file("../../sift_data/sift_query.fvecs");
-    
-//     cout << "SIFT base: " << sift_data.size() << " × " << sift_data[0].size() << endl;
-//     cout << "SIFT queries: " << sift_queries.size() << " × " << sift_queries[0].size() << endl;
-
-//     // cout << "\nΠρώτο SIFT διάνυσμα (πρώτα 10 στοιχεία): ";
-//     // for (int i = 0; i < 128; ++i)
-//     //     cout << sift_data[0][i] << " ";
-//     // cout << endl;
-
-//     // return mnist_data[0];
-//     // for(int i=0; i<mnist_data.size(); i++){
-//         // for(int j=0; j<sift_data[0].size(); ++j){
-//         //     cout << sift_data[0][j] << " ";
-//         // }
-//         // cout << endl;
-//         return sift_data;
-//     // }
-    
-//     // for(int i=0; i<128; i++){
-//     //     return sift_data[0][i];
-//     // }
-
-// }
-
+/* SIFT */
 
 #include "../include/sift_data.hpp"
 #include <iostream>
 #include <fstream>
 
+using namespace std;
+
 using std::cerr;
 using std::cout;
 using std::endl;
 
-std::vector<std::vector<float>> read_sift_file(const std::string& filename) {
-    std::ifstream file(filename, std::ios::binary);
+vector<vector<float>> read_sift_file(const string& filename){
+    ifstream file(filename, ios::binary);
     if (!file.is_open()) {
         cerr << "❌ Error: Cannot open file " << filename << endl;
         return {};
     }
 
-    std::vector<std::vector<float>> data;
+    vector<vector<float>> data;
     int32_t d = 0;
 
-    while (file.read(reinterpret_cast<char*>(&d), sizeof(int32_t))) {
+    while (file.read(reinterpret_cast<char*>(&d), sizeof(int32_t))){
         if (d != 128) {
             cerr << "⚠️ Unexpected dimension: " << d << endl;
             break;
         }
-        std::vector<float> vec(d);
-        if (!file.read(reinterpret_cast<char*>(vec.data()), d * sizeof(float))) {
+        vector<float> vec(d);
+        if (!file.read(reinterpret_cast<char*>(vec.data()), d * sizeof(float))){
             // truncated vector at end-of-file
             break;
         }
-        data.push_back(std::move(vec));
+        data.push_back(move(vec));
         // Για testing: όριο
         if (data.size() >= 1000) break;
     }
@@ -113,16 +39,16 @@ std::vector<std::vector<float>> read_sift_file(const std::string& filename) {
     return data;
 }
 
-std::vector<std::vector<float>> return_sift_data() {
-    return read_sift_file("../sift/sift_base.fvecs");
+vector<vector<float>> return_sift_data(){
+    return read_sift_file("../../sift/sift_base.fvecs");
 }
 
-std::vector<std::vector<float>> read_sift_query(const std::string& filename) {
+vector<vector<float>> read_sift_query(const string& filename){
     return read_sift_file(filename);
 }
 
-std::vector<std::vector<float>> return_sift_queries() {
-    return read_sift_query("../sift/sift_query.fvecs");
+vector<vector<float>> return_sift_queries(){
+    return read_sift_query("../../sift/sift_query.fvecs");
 }
 
 
