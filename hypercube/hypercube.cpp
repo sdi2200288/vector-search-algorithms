@@ -317,7 +317,7 @@ void Hypercube :: Queries(const vector<vector<double>>& queries,const vector<vec
         return;
     }
     
-    cout<<"Hypercube\n\n";
+    out<<"Hypercube\n\n";
 
     double total_Average_factor = 0.0, total_recall=0.0;
     double total_atime = 0.0, total_etime = 0.0;

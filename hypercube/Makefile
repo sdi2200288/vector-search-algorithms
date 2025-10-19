@@ -26,6 +26,6 @@ run:
 
 # Clean
 clean:
-	rm -f $(OBJS) $(TARGET) 
+	rm -f $(OBJS) $(TARGET) output.dat
 
 .PHONY: all run clean
