@@ -39,13 +39,14 @@ lsh :: ~lsh(){
 
 //Αρχικοποίηση τυχαίων διανυσμάτων (v) κ μετατοπίσεων (t)
 void lsh:: Initialize(size_t dataset_n){
-    cout<<"Initialize v and t and r"<<endl;
+    cout << "Initialize random components" << endl;
 
     default_random_engine generator(seed);
     normal_distribution<double> normal_dist(0.0,1.0);
     uniform_real_distribution<double> uniform_dist(0.0, w);
     uniform_int_distribution<uint64_t> uniform_r(1, M-1);
-
+    
+    //Setup τυχαίες μεταβλητές 
     randomvectors.resize(L);
     randomshifts.resize(L);
     random_r.resize(L);
@@ -103,7 +104,7 @@ vector<pair<int, double>> lsh::ANN(const vector<double>& query,const vector<vect
 
     sort(candidate_distances.begin(),candidate_distances.end(),[](const auto& a, const auto& b) { return a.second < b.second; });
 
-    if(candidate_distances.size()>N){
+    if(/*candidate_distances.size()>N*/  candidate_distances.size() > static_cast<size_t>(N)){
         candidate_distances.resize(N);
     }
 
@@ -120,14 +121,50 @@ vector<pair<int, double>> lsh::ENN(const vector<double>& query,const vector<vect
         
     sort(all_distances.begin(),all_distances.end(),[](const auto& a, const auto& b) { return a.second < b.second; });
 
-    if(all_distances.size() > N){
+    if(/*all_distances.size() > N*/ all_distances.size() > static_cast<size_t>(N)){
         all_distances.resize(N);
     }
     return all_distances;
 }
 
+vector<int> lsh:: ARange_Search(const vector<double>& query, const vector<vector<double>>& dataset){
+    unordered_set<int> candidate_set;
+    vector<int> range_neighbors;
+
+    // Συλλογή candidates από όλα τα hash tables
+    for(int i = 0; i < L; i++){
+        int query_hash = CreateHFun(query,i);
+        if(hashTables[i].find(query_hash) != hashTables[i].end()){
+            auto& bucket = hashTables[i][query_hash];
+            candidate_set.insert(bucket.begin(), bucket.end());
+        }
+    }
+
+    // Έλεγχος μόνο των candidates
+    for(int j : candidate_set){
+        double dist = euclidean_distance(query,dataset[j]);
+        if(dist <= R){
+            range_neighbors.push_back(j);
+        }
+    }
+
+    return range_neighbors;
+}
+
+vector<int> lsh:: ERange_Search(const vector<double>& query, const vector<vector<double>>& dataset){
+    vector<int> range_neighbors;
+
+    for(size_t j = 0; j < dataset.size(); j++){
+        double dist = euclidean_distance(query,dataset[j]);
+        if(dist <= R){
+            range_neighbors.push_back(j);
+        }
+    }
+
+    return range_neighbors;
+}
 void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<double>>& dataset){
-    cout<<"Calculate Queries"<<endl;
+    cout << "Calculate Queries" << endl;
 
     ofstream out(output_file);
     if(!out.is_open()){
@@ -135,7 +172,7 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
         return;
     }
     
-    cout<<"LSH\n\n";
+    out<<"LSH\n";
 
     double total_Average_factor = 0.0,total_recall=0.0;
     double total_atime = 0.0,total_etime = 0.0;
@@ -143,18 +180,18 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
 
     auto start_all = chrono::high_resolution_clock::now();
     
-    for(int i = 0; i < queries.size(); i++){
+    for(size_t i = 0; i < queries.size(); i++){
         const auto& q = queries[i];
 
         //Προσεγγιστική αναζήτηση
         auto start = chrono::high_resolution_clock::now();
-        auto aNN = ANN(q,dataset,N);    // vector<pair<int,double>>
+        auto aNN = ANN(q,dataset);    // vector<pair<int,double>>
         auto end = chrono::high_resolution_clock::now();
         auto atime = chrono::duration<double>(end-start).count();
         
         //Ακριβής αναζήτηση
         start = chrono::high_resolution_clock::now();
-        auto eNN = ENN(q,dataset,N);    //vector<pair<int,double>>
+        auto eNN = ENN(q,dataset);    //vector<pair<int,double>>
         end = chrono::high_resolution_clock::now();
         auto etime = chrono::duration<double>(end-start).count();
         
@@ -165,7 +202,7 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
         out << "Query: " << i <<endl;
         if(!aNN.empty() && !eNN.empty()) {
             
-            for(int neighbor = 0; neighbor < aNN.size(); neighbor++){
+            for(size_t neighbor = 0; neighbor < aNN.size(); neighbor++){
                 int data_idx =  aNN[neighbor].first;
                 
                 out << "Nearest neighbor-" << neighbor + 1 << ": " << data_idx << endl ;
@@ -192,23 +229,52 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
             double recall = (double)recall_hits / (double)eNN.size();
             total_recall += recall;
             
-            //Range Search
+            // //Exact Range Search
+            // if(range){
+            //     vector<int> range_neighbors;
+
+            //     for(size_t j = 0; j < dataset.size(); j++){
+            //         double dist = euclidean_distance(q,dataset[j]);
+            //         if(dist <= R){
+            //             range_neighbors.push_back(j);
+            //         }
+            //     }
+
+            //     out << "R-near neighbors:";
+            //     if(range_neighbors.empty()){
+            //         out << "\n";
+            //     }else{
+            //         out<< "\n";
+            //         for(int id: range_neighbors){
+            //             out << id << "\n";
+            //         }
+            //     }
+            // }
+
+            vector<int> aRN, eRN;
             if(range){
-                vector<int> range_neighbors;
-
-                for(size_t j = 0; j < dataset.size(); j++){
-                    double dist = euclidean_distance(q,dataset[j]);
-                    if(dist <= R){
-                        range_neighbors.push_back(j);
-                    }
-                }
-
+                // Approximate range search (για output)
+                aRN = ARange_Search(q, dataset);
+                
+                // Exact range search (για μετρικές σύγκρισης - προαιρετικό)
+                eRN = ERange_Search(q, dataset);
+                
                 out << "R-near neighbors:";
-                if(range_neighbors.empty()){
+                if(aRN.empty()){
                     out << "\n";
                 }else{
                     out<< "\n";
-                    for(int id: range_neighbors){
+                    for(int id: aRN){
+                        out << id << "\n";
+                    }
+                }
+
+                out << "R-near neighbors (Exact):";
+                if(eRN.empty()){
+                    out << "\n";
+                }else{
+                    out<< "\n";
+                    for(int id: eRN){
                         out << id << "\n";
                     }
                 }
@@ -228,7 +294,6 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
 
     out.close();
     cout<<"Complete Queries"<<endl;
-
    
 }
 
@@ -248,7 +313,7 @@ int lsh:: CreateHFun(const vector<double>& point, int tableIndex){
         }
 
         double numerator = dot_product + randomshifts[tableIndex][i];
-        int64_t h_i = static_cast<int64_t>(std::floor(numerator / w) );
+        int64_t h_i = static_cast<int64_t>(floor(numerator / w) );
         hash_values[i] = h_i;
     } 
 
@@ -281,7 +346,7 @@ void lsh:: CreateHashTables(const vector<vector<double>>& dataset){
     
     for(int i = 0; i < L; i++){
         for(size_t j = 0; j < dataset.size(); j++){
-            if(dataset[j].size() != dimension) {
+            if(/*dataset[j].size() != dimension*/ dataset[j].size() != static_cast<size_t>(dimension)) {
                 cerr << "Error: Vector dimension mismatch" << endl;
                 continue;
             }
@@ -293,7 +358,18 @@ void lsh:: CreateHashTables(const vector<vector<double>>& dataset){
 }
 
 void lsh::lsh_func(const vector<vector<double>>& dataset,const vector<vector<double>>& queries){
-
+    if (dataset.empty()) {
+        cerr << "Error: Dataset is empty" << endl;
+        return;
+    }
+    if (queries.empty()) {
+        cerr << "Error: Query set is empty" << endl;
+        return;
+    }
+    if (/*dataset[0].size() != dimension*/ dataset[0].size() != static_cast<size_t>(dimension)) {
+        cerr << "Error: Dataset dimension mismatch" << endl;
+        return;
+    }
     cout<<"LSH Algorithm" <<endl;
 
     cout << "Dataset size: " << dataset.size() << " vectors" << endl;
