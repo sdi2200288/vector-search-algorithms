@@ -8,11 +8,12 @@ using namespace std;
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         cerr << "Usage example:\n"
-             << "./search -d input.dat -q query.dat -k 4 -L 5 -w 4.0 "
-             << "-o output.txt -N 1 -R 2000 -type mnist -range true -lsh\n";
+             << "./search -d <input file> -q <query file> -k <int> -L <int> "
+             << " -w <double> -o <output file> -N <number of nearest> -R <radius> "
+             << "-type <flag> -lsh -range <true|false\n";
         return 1;
     }
-
+    
     // Flags για ποιον αλγόριθμο θα τρέξει
     bool use_lsh = false;
     bool use_hypercube = false;
@@ -93,7 +94,7 @@ int main(int argc, char *argv[]) {
             }
         }
         else{
-            cerr<<"Unkown type"<<endl;
+            cerr<<"Unknown type"<<endl;
             return 1;
         }
 
