@@ -8,7 +8,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-vector<vector<float>> read_mnist_file(const string& filename, int expected_images) {
+vector<vector<float>> read_mnist_file(const string& filename, int expected_images){
     ifstream file(filename, ios::binary);
     if (!file.is_open()) {
         cerr << "❌ Error: Cannot open file " << filename << endl;
@@ -47,40 +47,29 @@ vector<vector<float>> read_mnist_file(const string& filename, int expected_image
             images[i][j] = buffer[j] / 255.0f; // Κανονικοποίηση [0,1]
     }
 
-//     cout << "✅ Loaded " << num_images << " MNIST images of dimension " 
-//          << rows * cols << endl;
-//     return images;
-// }
+    cout << "✅ Loaded " << num_images << " MNIST images of dimension " 
+         << rows * cols << endl;
+    return images;
+}
 
 
-// // int main() {
-// //     auto mnist_data = read_mnist_file("mnist_data/train-images-idx3-ubyte");
-// //     cout << "MNIST: " << mnist_data.size() << " × " << mnist_data[0].size() << endl;
 
-// //     cout << "\nΠρώτο MNIST διάνυσμα (πρώτα 20 στοιχεία): ";
-// //     for (int i = 0; i < 784; ++i)
-// //         cout << mnist_data[1][i] << " ";
-// //     cout << endl;
-// // }
-
-// vector<float> return_mnist_data(){
-//     auto mnist_data = read_mnist_file("../../mnist_data/train-images-idx3-ubyte");
-//     cout << "MNIST: " << mnist_data.size() << " × " << mnist_data[0].size() << endl;
-
-//     // cout << "\nΠρώτο MNIST διάνυσμα (πρώτα 20 στοιχεία): ";
-//     // for (int i = 0; i < 784; ++i)
-//     //     cout << mnist_data[1][i] << " ";
-//     // cout << endl;  
-
-//     //return mnist_data[0];
-//     // for(int i=0; i<mnist_data.size(); i++){
-//         for(int j=0; j<mnist_data[0].size(); ++j){
-//             cout << mnist_data[0][j] << " ";
-//         }
-//         cout << endl;
+vector<vector<float>> return_mnist_data() {
+    // Βεβαιώσου ότι αυτή η συνάρτηση ΔΕΝ κάνει double free
+    // ή δεν επιστρέφει reference σε τοπικό αντικείμενο
+    auto mnist_data = read_mnist_file("../../mnist_data/t10k-images-idx3-ubyte");
+    // vector<vector<float>> mnist_data;
     
-//     // }
-//     // for(int i=0; i<784; i++){
-//     //     return mnist_data[0][i];
-//     // }
-// }
+    
+    
+    cout << "✅ Created MNIST test data: " << mnist_data.size() << " elements" << endl;
+    return mnist_data; // Επιστροφή αντιγράφου - ασφαλές
+}
+
+vector<vector<float>> read_mnist_query(const string& filename) {
+    return read_mnist_file(filename);
+}
+
+vector<vector<float>> return_mnist_queries(){
+    return read_mnist_query("../../mnist_data/train-images-idx3-ubyte");
+}
