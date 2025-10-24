@@ -6,9 +6,9 @@
 #include <vector>
 
 #include "../include/lsh.hpp"
-#include "../hypercube/hypercube.hpp"
-#include "../IVFFlat/IVFFlat.hpp"
-#include "../IVFPQ/ivfpq.hpp"
+#include "../include/hypercube.hpp"
+#include "../include/IVFFlat.hpp"
+#include "../include/ivfpq.hpp"
 #include "../include/sift_data.hpp"
 #include "../include/mnist_data.hpp"
 

@@ -1,36 +1,3 @@
-# # Compiler και flags
-# CXX = g++
-# CXXFLAGS = -Wall -g -std=c++17
-
-# # Executable
-# TARGET = search
-
-# # Source files
-# SRCS = main.cpp lsh.cpp
-# OBJS = $(SRCS:.cpp=.o)
-
-# # Default target: build μόνο
-# all: $(TARGET)
-
-# # Compile .cpp files σε .o
-# %.o: %.cpp
-# 	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# # Link objects σε executable
-# $(TARGET): $(OBJS)
-# 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
-
-# # Run με τα επιχειρήματα σου
-# run:
-# 	./$(TARGET) -d input.dat -q query.dat -k 4 -L 5 -w 4.0 -o output.txt -N 1 -R 2000 -type mnist -range true -lsh
-
-# # Clean
-# clean:
-# 	rm -f $(OBJS) $(TARGET) sift mnist
-
-# .PHONY: all run clean
-
-
 # Compiler και flags
 CXX = g++
 CXXFLAGS = -Wall -g -std=c++17 -Iinclude
@@ -39,7 +6,7 @@ CXXFLAGS = -Wall -g -std=c++17 -Iinclude
 TARGET = search
 
 # Source files (όλα τα .cpp μέσα στο src)
-SRCS = $(wildcard src/main.cpp src/lsh.cpp src/sift_data.cpp) #src/mnist_data.cpp 
+SRCS = $(wildcard src/main.cpp src/lsh.cpp src/hypercube.cpp src/IVFFlat.cpp src/ivfpq.cpp src/ivfpq_index.cpp src/k_means.cpp src/sift_data.cpp src/mnist_data.cpp) 
 OBJS = $(SRCS:.cpp=.o)
 
 # Default target
@@ -54,11 +21,20 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
 
 # Run
-run:
-	./$(TARGET) -d input.dat -q query.dat -k 10 -L 30 -w 1.5 -o output.txt -N 5 -R 150.0 -type sift -range true -lsh
+run_lsh:
+	./$(TARGET) -d input.dat -q query.dat -k 10 -L 30 -w 1.5 -o output.dat -N 5 -R 150.0 -type sift -range true -lsh
+
+run_hypercube:
+	./$(TARGET) -d input.dat -q query.dat -kproj 8 -w 1.0 -M 100 -probes 20 -o output.dat -N 5 -R 200 -type sift -range true -hypercube
+
+run_ivfflat:
+	./$(TARGET) -d input.dat -q query.dat -kclusters 100 -nprobe 10 -o output.dat -N 10 -R 2000 -type mnist -range true -ivfflat -seed 1
+
+run_ivfpq:
+	./$(TARGET) -d input.dat -q query.dat -kclusters 100 -nprobe 10 -M 16 -o output.dat -N 1 -R 700 -type sift -nbits 8 -range true -ivfpq -seed 1
 
 # Clean
 clean:
-	rm -f $(OBJS) $(TARGET) src/mnist_data.o src/sift_data.o src/main1
+	rm -f $(OBJS) $(TARGET) output.dat
 
 .PHONY: all run clean

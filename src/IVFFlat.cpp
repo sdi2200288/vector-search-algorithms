@@ -1,14 +1,17 @@
-//#include <iostream>
+/* IVFFlat */
+
+#include <iostream>
 #include <cmath>
 #include <random>
 #include <algorithm>
-#include "IVFFlat.hpp"
 #include <fstream>
 #include <climits>
 #include <chrono>
 #include <queue> 
 
-// using namespace std;
+#include "../include/IVFFlat.hpp"
+
+using namespace std;
 
 IVFFlat::IVFFlat(int seed1, string input_file1, string query_file1, string output_file1, int kclusters1, int nprobe1, int N1, double R1, string type1, bool range1){
     seed = seed1;

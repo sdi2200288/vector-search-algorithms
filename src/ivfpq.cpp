@@ -9,7 +9,7 @@
 #include <limits>
 #include <chrono>
 
-#include "ivfpq.hpp"
+#include "../include/ivfpq.hpp"
 
 using namespace std;
 

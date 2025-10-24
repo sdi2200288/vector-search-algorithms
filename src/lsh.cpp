@@ -1,4 +1,4 @@
-//LSH ALGORITHM
+/* LSH */
 #include <iostream>
 #include <fstream>
 #include <vector>
