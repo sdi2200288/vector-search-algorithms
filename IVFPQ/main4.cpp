@@ -6,7 +6,6 @@
 #include "../include/sift_data.hpp"
 #include "../include/mnist_data.hpp"
 
-
 using namespace std;
 
 int main(int argc, char* argv[]){
@@ -104,5 +103,12 @@ int main(int argc, char* argv[]){
         IVFPQ ivfpq(input_file, query_file, output_file, type, kclusters, nprobe, M, N, seed, nbits, R, range);
         ivfpq.print_params();
         cout << endl; 
+
+        ivfpq.ivfpq_func(dataset, queries);
     }
+    else{
+        cerr << "Error: You must specify an algorithm flag (-lsh, -hypercube, or -ivfflat)\n";
+    }
+
+    return 0;
 }
