@@ -4,10 +4,11 @@
 #include <cmath>
 #include <random>
 #include <algorithm>
-#include "hypercube.hpp"
 #include <fstream>
 #include <climits>
 #include <chrono>
+
+#include "hypercube.hpp"
 
 // using namespace std;
 
@@ -33,12 +34,12 @@ Hypercube :: ~Hypercube(){
 }
 
 void Hypercube :: print_params() {
-    std::cout << "input_file: " << input_file << "\n"
-              << "query_file: " << query_file << "\n"
-              << "output_file: " << output_file << "\n"
-              << "kproj: " << kproj << ", M: " << M << ", w: " << w << ", N: " << N << ", R: " << R << ", probes: " << probes << "\n"
-              << "type: " << type << "\n"
-              << "range: " << boolalpha << range << "\n";
+    cout << "input_file: " << input_file << "\n"
+         << "query_file: " << query_file << "\n"
+         << "output_file: " << output_file << "\n"
+         << "kproj: " << kproj << ", M: " << M << ", w: " << w << ", N: " << N << ", R: " << R << ", probes: " << probes << "\n"
+         << "type: " << type << "\n"
+         << "range: " << boolalpha << range << "\n";
 }
 
 int Hypercube :: hypercube_dimension(const vector<vector<double>>& dataset, int kproj){

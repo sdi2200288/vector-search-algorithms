@@ -1,5 +1,5 @@
-#ifndef LSH_HPP
-#define LSH_HPP
+#ifndef HYPERCUBE_HPP
+#define HYPERCUBE_HPP
 
 #include <iostream>
 #include <vector>

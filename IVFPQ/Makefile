@@ -6,7 +6,7 @@ CXXFLAGS = -Wall -g -std=c++17 -Iinclude
 TARGET = search
 
 # Source files (όλα τα .cpp μέσα στο src)
-SRCS = $(wildcard main2.cpp hypercube.cpp ../src/sift_data.cpp) 
+SRCS = $(wildcard main4.cpp ivfpq.cpp ../src/sift_data.cpp) 
 OBJS = $(SRCS:.cpp=.o)
 
 # Default target
@@ -22,7 +22,7 @@ $(TARGET): $(OBJS)
 
 # Run
 run:
-	./$(TARGET) -d input.dat -q query.dat -kproj 8 -w 1.0 -M 100 -probes 20 -o output.dat -N 5 -R 200 -type sift -range true -hypercube
+	./$(TARGET) -d input.dat -q query.dat -kclusters 50 -nprobe 5 -M 16 -o output.dat -N 1 -R 200 -type sift -nbits 8 -range true -ivfpq -seed 1
 
 # Clean
 clean:
