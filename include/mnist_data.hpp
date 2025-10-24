@@ -1,18 +1,3 @@
-// //mnist_data.hpp
-
-// #ifndef MNSIT_DATA_HPP
-// #define MNSIT_DATA_HPP
-
-// #include <string>
-// #include <vector>
-// using namespace std;
-
-// vector<vector<float>> read_mnist_file(const string& filename, int expected_images);
-// vector<float> return_mnist_data();
-
-// #endif
-
-
 #ifndef MNIST_DATA_HPP
 #define MNIST_DATA_HPP
 
@@ -27,6 +12,7 @@ vector<vector<float>> read_mnist_file(const string& filename, int expected_image
 vector<vector<float>> return_mnist_data();
 vector<vector<float>> read_mnist_query(const string& filename);
 vector<vector<float>> return_mnist_queries();
+<<<<<<< HEAD
 
 // vector<vector<float>> read_mnist_file(const string& filename, int expected_images = 60000) {
 //     ifstream file(filename, ios::binary);
@@ -93,5 +79,7 @@ vector<vector<float>> return_mnist_queries();
 // vector<vector<float>> return_mnist_queries(){
 //     return read_mnist_query("../../mnist_data/train-images-idx3-ubyte");
 // }
+=======
+>>>>>>> 509e2b70d14d8996c460c3f92a2a9e2fcc5dc7b7
 
 #endif

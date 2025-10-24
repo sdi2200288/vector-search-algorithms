@@ -7,7 +7,7 @@
 #include "../include/mnist_data.hpp"
 
 
-// using namespace std;
+using namespace std;
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -18,13 +18,13 @@ int main(int argc, char *argv[]) {
     }
 
     // Flags για ποιον αλγόριθμο θα τρέξει
-    bool use_hypercube = false;
+    //bool use_hypercube = false;
     bool use_ivfflat = false;
 
     for(int i=0; i<argc; i++){
         string arg = argv[i];        
         if(arg == "-hypercube"){
-            use_hypercube = true;
+           // use_hypercube = true;
             break;
         }
         else if(arg == "-ivfflat"){
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     int kclusters = 14, N = 1, nprobe = 2, seed = 1;
     double R;
     bool range = false, R_flag = false;
-
+   
     if(use_ivfflat){
         cout << "\n>>> Running IVFFlat Algorithm...\n";
         for(int i = 1; i<argc; i++){
@@ -103,6 +103,39 @@ int main(int argc, char *argv[]) {
             cout << "Data size: " << dataset.size() << " vectors x " << dataset[0].size() << " dimensions" << endl;
         }
 
+        IVFFlat ivfflat(seed, input_file, query_file, output_file, kclusters, nprobe, N, R, type, range);
+        ivfflat.print_params();
+        // vector<vector<double>> test_dataset = {
+        //     {1.0, 1.0, 1.0, 1.0},      // Vector 0 
+        //     {1.1, 1.1, 1.1, 1.1},      // Vector 1 
+        //     {1.2, 1.2, 1.2, 1.2},      // Vector 2
+        //     {5.0, 5.0, 5.0, 5.0},      // Vector 3
+        //     {5.1, 5.1, 5.1, 5.1},      // Vector 4 
+        //     {5.2, 5.2, 5.2, 5.2},      // Vector 5 - κοντά στο 3
+        //     {10.0, 10.0, 10.0, 10.0},  // Vector 6 - άλλη ομάδα
+        //     {10.1, 10.1, 10.1, 10.1},  // Vector 7 - κοντά στο 6
+        //     {0.5, 0.5, 0.5, 0.5},      // Vector 8 - πρώτη ομάδα
+        //     {0.6, 0.6, 0.6, 0.6}       // Vector 9 - κοντά στο 8
+        // };
+
+        // vector<vector<double>> test_query = {
+        //     {1.05, 1.05, 1.05, 1.05},  // Μεταξύ vector 0 και 1
+        //     {1.15, 1.15, 1.15, 1.15},  // Μεταξύ vector 1 και 2  
+        //     {5.05, 5.05, 5.05, 5.05},  // Μεταξύ vector 3 και 4
+        //     {0.55, 0.55, 0.55, 0.55}      // Query 2 - ίδιο με vector 3
+        // };
+
+        // cout << "\n DATASET VECTORS:" << endl;
+        // for (size_t i = 0; i < test_dataset.size(); i++) {
+        //     cout << "Vector " << i << ": [";
+        //     for (size_t j = 0; j < test_dataset[i].size(); j++) {
+        //         cout << test_dataset[i][j];
+        //         if (j < test_dataset[i].size() - 1) cout << ", ";
+        //     }
+        //     cout << "]" << endl;
+        // }
+        ivfflat.ivfflat_func(dataset,queries);
+        cout << "IVFFlat algorithm completed successfully!" << endl;
 
     }
     else if (use_ivfflat) {
