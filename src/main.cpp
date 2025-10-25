@@ -44,7 +44,9 @@ int main(int argc, char* argv[]){
     string type, input_file, query_file, output_file;
     for(int i=0; i<argc; i++){
         string arg = argv[i];
-        if(arg == "-type"){
+        if (arg == "-d") input_file = argv[++i];
+        else if (arg == "-q") query_file = argv[++i];
+        else if(arg == "-type"){
             type = argv[++i];
             break;
         } 
@@ -56,22 +58,22 @@ int main(int argc, char* argv[]){
     
     if(type == "mnist"){
         cout << "MNIST: " << endl;
-        vector<vector<float>> float_data = return_mnist_data();
-        vector<vector<float>> float_queries = return_mnist_queries();
+        vector<vector<float>> float_data = return_mnist_data(input_file);
+        vector<vector<float>> float_queries = return_mnist_queries(query_file);
         
         dataset.resize(float_data.size());
-        for(size_t i = 0; i < float_data.size(); i++) {
+        for(size_t i = 0; i < float_data.size(); i++){
             dataset[i].assign(float_data[i].begin(), float_data[i].end());
         }
         queries.resize(float_queries.size());
-        for(size_t i = 0; i < float_queries.size(); i++) {
+        for(size_t i = 0; i < float_queries.size(); i++){
             queries[i].assign(float_queries[i].begin(), float_queries[i].end());
         }  
     }
     else if(type == "sift"){
         cout << "SIFT: " << endl;
-        vector<vector<float>> float_data = return_sift_data();
-        vector<vector<float>> float_queries = return_sift_queries();
+        vector<vector<float>> float_data = return_sift_data(input_file);
+        vector<vector<float>> float_queries = return_sift_queries(query_file);
         
         dataset.resize(float_data.size());
         for(size_t i = 0; i < float_data.size(); i++) {
@@ -102,9 +104,7 @@ int main(int argc, char* argv[]){
         for (int i = 1; i < argc; ++i) {
             string arg = argv[i];
 
-            if (arg == "-d") input_file = argv[++i];
-            else if (arg == "-q") query_file = argv[++i];
-            else if (arg == "-o") output_file = argv[++i];
+            if (arg == "-o") output_file = argv[++i];
             else if (arg == "-k") k = stoi(argv[++i]);
             else if (arg == "-L") L = stoi(argv[++i]);
             else if (arg == "-w") w = stod(argv[++i]);
@@ -134,9 +134,7 @@ int main(int argc, char* argv[]){
 
         for(int i = 1; i<argc; i++){
             string arg = argv[i];
-            if(arg == "-d") input_file = argv[++i];
-            else if(arg == "-q") query_file = argv[++i];
-            else if(arg == "-kproj") kproj = stoi(argv[++i]);
+            if(arg == "-kproj") kproj = stoi(argv[++i]);
             else if(arg == "-w") w = stod(argv[++i]);
             else if(arg == "-M") M = stoi(argv[++i]);
             else if(arg == "-probes") probes = stoi(argv[++i]); 
@@ -168,9 +166,7 @@ int main(int argc, char* argv[]){
 
         for(int i = 1; i<argc; i++){
             string arg = argv[i];
-            if(arg == "-d") input_file = argv[++i];
-            else if(arg == "-q") query_file = argv[++i];
-            else if(arg == "-kclusters") kclusters = stoi(argv[++i]);
+            if(arg == "-kclusters") kclusters = stoi(argv[++i]);
             else if(arg == "-nprobe") nprobe = stoi(argv[++i]); 
             else if(arg == "-o") output_file = argv[++i];
             else if(arg == "-N") N = stoi(argv[++i]);
@@ -199,9 +195,7 @@ int main(int argc, char* argv[]){
 
         for(int i=1; i<argc; i++){
             string arg = argv[i];
-            if(arg == "-d") input_file = argv[++i];
-            else if(arg == "-q") query_file = argv[++i];
-            else if(arg == "-kclusters") kclusters = stoi(argv[++i]);
+            if(arg == "-kclusters") kclusters = stoi(argv[++i]);
             else if(arg == "-nprobe") nprobe = stoi(argv[++i]);
             else if(arg == "-M") M = stoi(argv[++i]);
             else if(arg == "-o") output_file = argv[++i];
