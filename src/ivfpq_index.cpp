@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include "../include/ivfpq_index.hpp"
+#include <cstdint>
 
 using namespace std;
 
