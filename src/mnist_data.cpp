@@ -54,10 +54,10 @@ vector<vector<float>> read_mnist_file(const string& filename, int expected_image
 
 
 
-vector<vector<float>> return_mnist_data() {
+vector<vector<float>> return_mnist_data(const string& input_file) {
     // Βεβαιώσου ότι αυτή η συνάρτηση ΔΕΝ κάνει double free
     // ή δεν επιστρέφει reference σε τοπικό αντικείμενο
-    auto mnist_data = read_mnist_file("../../mnist_data/t10k-images-idx3-ubyte");
+    auto mnist_data = read_mnist_file(input_file);
     // vector<vector<float>> mnist_data;
     
     
@@ -70,6 +70,6 @@ vector<vector<float>> read_mnist_query(const string& filename) {
     return read_mnist_file(filename);
 }
 
-vector<vector<float>> return_mnist_queries(){
-    return read_mnist_query("../../mnist_data/train-images-idx3-ubyte");
+vector<vector<float>> return_mnist_queries(const string& query_file){
+    return read_mnist_query(query_file);
 }

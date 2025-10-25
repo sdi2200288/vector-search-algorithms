@@ -22,7 +22,7 @@ $(TARGET): $(OBJS)
 
 # Run
 run_lsh:
-	./$(TARGET) -d input.dat -q query.dat -k 10 -L 30 -w 1.5 -o output.dat -N 5 -R 150.0 -type sift -range true -lsh
+	./$(TARGET) -d "../mnist_data/t10k-images-idx3-ubyte" -q "../mnist_data/train-images-idx3-ubyte" -k 10 -L 30 -w 1.5 -o output.dat -N 5 -R 150.0 -type sift -range true -lsh
 
 run_hypercube:
 	./$(TARGET) -d input.dat -q query.dat -kproj 8 -w 1.0 -M 100 -probes 20 -o output.dat -N 5 -R 200 -type sift -range true -hypercube

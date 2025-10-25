@@ -39,16 +39,16 @@ vector<vector<float>> read_sift_file(const string& filename){
     return data;
 }
 
-std::vector<std::vector<float>> return_sift_data() {
-    return read_sift_file("../sift/sift_base.fvecs");
+std::vector<std::vector<float>> return_sift_data(const string& input_file) {
+    return read_sift_file(input_file); //"../sift/sift_base.fvecs"
 }
 
 vector<vector<float>> read_sift_query(const string& filename){
     return read_sift_file(filename);
 }
 
-std::vector<std::vector<float>> return_sift_queries() {
-    return read_sift_query("../sift/sift_query.fvecs");
+std::vector<std::vector<float>> return_sift_queries(const string& query_file) {
+    return read_sift_query(query_file); //"../sift/sift_query.fvecs"
 }
 
 
