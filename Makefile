@@ -22,16 +22,16 @@ $(TARGET): $(OBJS)
 
 # Run
 run_lsh:
-	./$(TARGET) -d "../mnist_data/t10k-images-idx3-ubyte" -q "../mnist_data/train-images-idx3-ubyte" -k 10 -L 30 -w 1.5 -o output.dat -N 5 -R 150.0 -type sift -range true -lsh
+	./$(TARGET) -d "../mnist_data/t10k-images-idx3-ubyte" -q "../mnist_data/train-images-idx3-ubyte" -k 10 -L 30 -w 1.5 -o output.dat -N 5 -R 2000.0 -type mnist -range true -lsh
 
 run_hypercube:
-	./$(TARGET) -d input.dat -q query.dat -kproj 8 -w 1.0 -M 100 -probes 20 -o output.dat -N 5 -R 200 -type sift -range true -hypercube
+	./$(TARGET) -d "../sift/sift_base.fvecs" -q "../sift/sift_query.fvecs" -kproj 8 -w 1.0 -M 100 -probes 20 -o output.dat -N 5 -R 200 -type sift -range false -hypercube
 
 run_ivfflat:
-	./$(TARGET) -d input.dat -q query.dat -kclusters 100 -nprobe 10 -o output.dat -N 10 -R 2000 -type mnist -range true -ivfflat -seed 1
+	./$(TARGET) -d "../sift/sift_base.fvecs" -q "../sift/sift_query.fvecs" -kclusters 100 -nprobe 10 -o output.dat -N 10 -R 2000 -type sift -range false -ivfflat -seed 1
 
 run_ivfpq:
-	./$(TARGET) -d input.dat -q query.dat -kclusters 100 -nprobe 10 -M 16 -o output.dat -N 1 -R 700 -type sift -nbits 8 -range true -ivfpq -seed 1
+	./$(TARGET) -d "../sift/sift_base.fvecs" -q "../sift/sift_query.fvecs" -kclusters 100 -nprobe 10 -M 16 -o output.dat -N 1 -R 700 -type sift -nbits 8 -range false -ivfpq -seed 1
 
 # Clean
 clean:

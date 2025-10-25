@@ -387,14 +387,16 @@ void Hypercube :: Queries(const vector<vector<double>>& queries,const vector<vec
             end = chrono::high_resolution_clock::now();
             auto etime = chrono::duration<double>(end-start).count();
 
-            out << "R-near neigbours" << endl;
-            if(!eRN.empty() && !aRN.empty()){
-                for(int id : aRN){
-                    out << id << endl;
-                }
+            if(range){
+                out << "R-near neigbours" << endl;
+                if(!eRN.empty() && !aRN.empty()){
+                    for(int id : aRN){
+                        out << id << endl;
+                    }
 
-                for(int id : eRN){
-                    out << id << endl;
+                    for(int id : eRN){
+                        out << id << endl;
+                    }
                 }
             }            
 
