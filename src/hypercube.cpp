@@ -240,7 +240,7 @@ vector<pair<int, double>> Hypercube :: approximate_nearest_neighbors(const vecto
     
     sort(candidates.begin(), candidates.end(), [](const auto& a, const auto& b) { return a.second < b.second; });   //ταξινόμηση και επιστροφη κοντινότερων γειτόνων
     
-    if(candidates.size() > N){
+    if(candidates.size() >  static_cast<size_t>(N)){
         candidates.resize(N);
     }
     
@@ -250,14 +250,14 @@ vector<pair<int, double>> Hypercube :: approximate_nearest_neighbors(const vecto
 vector<pair<int, double>> Hypercube::exact_nearest_neighbors(const vector<double>& query){
     vector<pair<int, double>> all_distances;
     
-    for(int i = 0; i < dataset_reference.size(); i++){      //υπολογισμός απόστασης απο όλα τα σημεία
+    for(size_t i = 0; i < dataset_reference.size(); i++){      //υπολογισμός απόστασης απο όλα τα σημεία
         double dist = euclidean_distance(dataset_reference[i], query);
         all_distances.push_back({i, dist});
     }
     
     sort(all_distances.begin(), all_distances.end(), [](const auto& a, const auto& b) { return a.second < b.second; });     //ταξινόμηση κατά αύξουσα απόσταση
     
-    if(all_distances.size() > N){   //επιστρτοφή των n πρωτων πλησιέστερων
+    if(all_distances.size() >  static_cast<size_t>(N)){   //επιστρτοφή των n πρωτων πλησιέστερων
         all_distances.resize(N);
     }
     
@@ -326,7 +326,7 @@ void Hypercube :: Queries(const vector<vector<double>>& queries,const vector<vec
 
     auto start_all = chrono::high_resolution_clock::now();
     
-    for(int i = 0; i < queries.size(); i++){
+    for(size_t i = 0; i < queries.size(); i++){
         const auto& q = queries[i];
 
         //Προσεγγιστική αναζήτηση
@@ -348,7 +348,7 @@ void Hypercube :: Queries(const vector<vector<double>>& queries,const vector<vec
         out << "Query: " << i <<endl;
         if(!aNN.empty() && !eNN.empty()) {
             
-            for(int neighbor = 0; neighbor < aNN.size(); neighbor++){
+            for(size_t neighbor = 0; neighbor < aNN.size(); neighbor++){
                 int data_idx =  aNN[neighbor].first;
                 
                 out << "Nearest neighbor-" << neighbor + 1 << ": " << data_idx << endl ;
@@ -376,27 +376,29 @@ void Hypercube :: Queries(const vector<vector<double>>& queries,const vector<vec
             total_recall += recall;
             
             //Προσεγγιστική αναζήτηση
-            auto start = chrono::high_resolution_clock::now();
-            auto aRN = approximate_range_search(q);    // vector<pair<int,double>>
-            auto end = chrono::high_resolution_clock::now();
-            auto atime = chrono::duration<double>(end-start).count();
+            //auto start = chrono::high_resolution_clock::now();
+            //auto aRN = approximate_range_search(q);    // vector<pair<int,double>>
+            // auto end = chrono::high_resolution_clock::now();
+            // auto atime = chrono::duration<double>(end-start).count();
             
-            //Ακριβής αναζήτηση
-            start = chrono::high_resolution_clock::now();
-            auto eRN = exact_range_search(q);    //vector<pair<int,double>>
-            end = chrono::high_resolution_clock::now();
-            auto etime = chrono::duration<double>(end-start).count();
+            // //Ακριβής αναζήτηση
+            // start = chrono::high_resolution_clock::now();
+            // auto eRN = exact_range_search(q);    //vector<pair<int,double>>
+            // end = chrono::high_resolution_clock::now();
+            // auto etime = chrono::duration<double>(end-start).count();
 
+            vector<int> aRN;
             if(range){
-                out << "R-near neigbours" << endl;
-                if(!eRN.empty() && !aRN.empty()){
+                aRN = approximate_range_search(q);
+                out << "R-near neighbors:" << endl;
+                if(/*!eRN.empty() &&*/ !aRN.empty()){
                     for(int id : aRN){
                         out << id << endl;
                     }
 
-                    for(int id : eRN){
-                        out << id << endl;
-                    }
+                    // for(int id : eRN){
+                    //     out << id << endl;
+                    // }
                 }
             }            
 
