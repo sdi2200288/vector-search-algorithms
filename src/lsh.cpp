@@ -121,7 +121,7 @@ vector<pair<int, double>> lsh::ENN(const vector<double>& query,const vector<vect
         
     sort(all_distances.begin(),all_distances.end(),[](const auto& a, const auto& b) { return a.second < b.second; });
 
-    if(/*all_distances.size() > N*/ all_distances.size() > static_cast<size_t>(N)){
+    if(all_distances.size() > static_cast<size_t>(N)){
         all_distances.resize(N);
     }
     return all_distances;
@@ -229,36 +229,11 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
             double recall = (double)recall_hits / (double)eNN.size();
             total_recall += recall;
             
-            // //Exact Range Search
-            // if(range){
-            //     vector<int> range_neighbors;
-
-            //     for(size_t j = 0; j < dataset.size(); j++){
-            //         double dist = euclidean_distance(q,dataset[j]);
-            //         if(dist <= R){
-            //             range_neighbors.push_back(j);
-            //         }
-            //     }
-
-            //     out << "R-near neighbors:";
-            //     if(range_neighbors.empty()){
-            //         out << "\n";
-            //     }else{
-            //         out<< "\n";
-            //         for(int id: range_neighbors){
-            //             out << id << "\n";
-            //         }
-            //     }
-            // }
-
-            vector<int> aRN, eRN;
+            vector<int> aRN;
             if(range){
                 // Approximate range search (για output)
                 aRN = ARange_Search(q, dataset);
-                
-                // Exact range search (για μετρικές σύγκρισης - προαιρετικό)
-                eRN = ERange_Search(q, dataset);
-                
+             
                 out << "R-near neighbors:";
                 if(aRN.empty()){
                     out << "\n";
@@ -268,30 +243,29 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
                         out << id << "\n";
                     }
                 }
-
-                out << "R-near neighbors (Exact):";
-                if(eRN.empty()){
-                    out << "\n";
-                }else{
-                    out<< "\n";
-                    for(int id: eRN){
-                        out << id << "\n";
-                    }
-                }
             }
 
-            double total_time_all = chrono::duration<double>(chrono::high_resolution_clock::now()-start_all).count();
-            double qps = (valid_q > 0) ? valid_q / total_time_all : 0.0;
 
             out<< "Average AF: " << Average_factor << endl;
-            out<< "Recall@N: " << recall <<endl;
-            out << "QPS: " << qps << endl;
+            out<< "Recall@N: " << recall <<endl;           
             out << "tApproximateAverage: " << atime << endl;
             out << "tTrueAverage: " << etime << endl;
             out << "-------------------" << endl;
         }     
     }
-
+    
+    // Υπολογισμός QPS για όλο το σύνολο
+    auto end_all = chrono::high_resolution_clock::now();
+    double total_time_all = chrono::duration<double>(end_all-start_all).count();
+    double qps = (queries.size() > 0) ? queries.size() / total_time_all : 0.0;
+  
+    out << "FINAL METRICS:" << endl;
+    out << "Total Average AF: " << total_Average_factor / valid_q << endl;
+    out << "Total Average Recall@N: " << total_recall / valid_q << endl;
+    out << "Overall QPS: " << qps << endl;
+    out << "Average Approximate Time: " << total_atime / valid_q << endl;
+    out << "Average Exact Time: " << total_etime / valid_q << endl;
+    
     out.close();
     cout<<"Complete Queries"<<endl;
    
