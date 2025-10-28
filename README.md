@@ -55,3 +55,12 @@
 ***make run_parse_results*** και ***make run_create_plots***.
 
 Για να διαγράψουμε τα παραγόμενα αρχεία χρησιμοποιούμε την εντολή ***make clean***. 
+
+## Απαιτήσεις Συστήματος
+1. **C++** compiler (g++)
+2. **Python 3** με βιβλιοθήκες:
+  - pandas
+  - matplotlib  
+  - seaborn
+  - numpy
+3. **Linux** environment
