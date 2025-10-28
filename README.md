@@ -9,6 +9,21 @@
 Το project έχει υλοποιηθεί σε C++, η πειαματική ανάλυση σε python και υπάρχει ένα bash αρχείο το οποίο 
 χρησιμοποιείται για την πειραματική ανάλυση. 
 
+Στην πειραματική ανάλυση παράγονται τα αρχεία:
+1. algorithm_comparison_table.csv
+2. final_metrics_comparison.csv
+3. detailed_summary.csv
+, τα οποία περιέχουν τα δεδομένα από τα αποτελέσματα των αλγορίθων που χρειάζονται για την υλοποίηση της πειραματικής ανάλυσης, και οι εικόνες με τα γραφήματα:
+4. af_vs_recall_correlation.png
+5. algorithm_comparison.png
+6. correlation_matrix.png
+7. lsh_parameter_sensitivity.png
+8. qps_by_algorithm.png
+9. qps_vs_af.png
+10. qps_vs_recall.png
+11. recall_by_algorithm.png 
+
+
 **Υλοποιημένοι Αλγόριθμοι:**
 1. LSH (Locality Sensitive Hashing)
 2. Hypercube (Τυχαία προβολή σε Υπερκύβο)
