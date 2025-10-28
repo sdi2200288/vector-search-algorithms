@@ -46,7 +46,7 @@ run_ivfflat:
 	./$(TARGET) -d "../sift/sift_base.fvecs" -q "../sift/sift_query.fvecs" -kclusters 256 -nprobe 20 -o ivfflat_output.dat -N 10 -R 30 -type sift -range false -ivfflat -seed 1
 
 run_ivfpq:
-	./$(TARGET) -d "../sift/sift_base.fvecs" -q "../sift/sift_query.fvecs" -kclusters 100 -nprobe 10 -M 16 -o output.dat -N 1 -R 700 -type sift -nbits 8 -range true -ivfpq -seed 1
+	./$(TARGET) -d "../sift/sift_base.fvecs" -q "../sift/sift_query.fvecs" -kclusters 100 -nprobe 10 -M 16 -o ivfpq_output.dat -N 1 -R 700 -type sift -nbits 8 -range true -ivfpq -seed 1
 
 # Clean
 clean:

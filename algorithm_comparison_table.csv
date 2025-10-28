@@ -1,0 +1,22 @@
+Algorithm,Parameters,Dataset,Avg AF,Recall@N,QPS,Avg Approx Time (s),Avg Exact Time (s),File
+LSH,"k=4.0, L=5.0, w=4.0",SIFT,1.27057,0.0152,720.505,5.8108,0.00113526,lsh_L5.dat
+IVFFlat,"kclusters=50.0, nprobe=20.0",SIFT,0.0602311,0.978,524.476,0.000471083,0.00120869,ivfflat_nprobe20.dat
+IVFPQ,"kclusters=50.0, nprobe=5.0, M=8.0, nbits=8.0",SIFT,2.68196,0.7228,227.526,0.00305009,0.00115609,ivfpq_M8.dat
+LSH,"k=8.0, L=5.0, w=4.0",SIFT,1.12146,0.1124,349.839,0.00057401,0.00147786,lsh_k8.dat
+LSH,"k=6.0, L=5.0, w=4.0",SIFT,1.12574,0.1102,247.124,0.000762095,0.00217252,lsh_k6.dat
+IVFPQ,"kclusters=50.0, nprobe=5.0, M=16.0, nbits=8.0",SIFT,2.68893,0.6497,236.384,0.00236117,0.0015499,ivfpq_nprobe5.dat
+Hypercube,"kproj=14.0, M=100.0, probes=2.0",SIFT,1.14526,0.088,667.567,0.000147828,0.00122098,hypercube_M100.dat
+Hypercube,"kproj=14.0, M=10.0, probes=2.0",SIFT,1.3297,0.0136,620.987,0.000227248,0.00125215,hypercube_kproj14.dat
+LSH,"k=4.0, L=5.0, w=4.0",SIFT,1.11716,0.1186,359.212,0.000464396,0.0016528,lsh_k4.dat
+IVFPQ,"kclusters=50.0, nprobe=5.0, M=4.0, nbits=8.0",SIFT,1.92625,0.6747,233.527,0.00284707,0.00118197,ivfpq_M4.dat
+IVFFlat,"kclusters=50.0, nprobe=10.0",SIFT,0.0602558,0.8862,568.073,0.000392054,0.0011509,ivfflat_nprobe10.dat
+IVFPQ,"kclusters=50.0, nprobe=10.0, M=16.0, nbits=8.0",SIFT,2.68196,0.7228,111.966,0.00653238,0.00214441,ivfpq_nprobe10.dat
+IVFFlat,"kclusters=50.0, nprobe=40.0",SIFT,0.0602281,0.9985,480.544,0.000580286,0.00122451,ivfflat_nprobe40.dat
+Hypercube,"kproj=14.0, M=150.0, probes=2.0",SIFT,1.14526,0.088,664.316,0.000148594,0.00123118,hypercube_M150.dat
+Hypercube,"kproj=16.0, M=10.0, probes=2.0",SIFT,1.51352,0.0052,613.979,0.00031667,0.0012006,hypercube_kproj16.dat
+LSH,"k=4.0, L=3.0, w=4.0",SIFT,1.33041,0.0076,704.14,3.69917,0.00119161,lsh_L3.dat
+IVFPQ,"kclusters=50.0, nprobe=5.0, M=16.0, nbits=8.0",SIFT,3.67176,0.7547,203.242,0.00355233,0.00116637,ivfpq_M16.dat
+Hypercube,"kproj=10.0, M=10.0, probes=2.0",SIFT,1.21814,0.0332,667.203,0.00010772,0.0012565,hypercube_kproj10.dat
+IVFPQ,"kclusters=50.0, nprobe=20.0, M=16.0, nbits=8.0",SIFT,2.68086,0.7419,69.6109,0.0120044,0.00210982,ivfpq_nprobe20.dat
+LSH,"k=4.0, L=10.0, w=4.0",SIFT,1.2093,0.0376,625.135,0.000119209,0.00120651,lsh_L10.dat
+IVFFlat,"kclusters=50.0, nprobe=5.0",SIFT,0.0603455,0.7088,575.631,0.00036288,0.00116922,ivfflat_nprobe5.dat

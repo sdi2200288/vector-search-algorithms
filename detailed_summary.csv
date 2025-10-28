@@ -1,0 +1,5 @@
+Algorithm,Dataset,Recall@N,QPS,Avg AF,Avg Approx Time (s)
+Hypercube,SIFT,0.046,646.81,1.27,0.0
+IVFFlat,SIFT,0.893,537.181,0.06,0.0
+IVFPQ,SIFT,0.711,180.376,2.722,0.005
+LSH,SIFT,0.067,500.992,1.196,1.585
