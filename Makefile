@@ -35,6 +35,6 @@ run_ivfpq:
 
 # Clean
 clean:
-	rm -f $(OBJS) $(TARGET) output.dat lsh_output.dat hyp_output.dat ivfflat_output.dat
+	rm -f $(OBJS) $(TARGET) output.dat lsh_output.dat hyp_output.dat ivfflat_output.dat algorithm_comparison_table.csv final_metrics_comparison.csv
 
 .PHONY: all run clean

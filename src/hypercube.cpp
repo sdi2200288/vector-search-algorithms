@@ -402,12 +402,12 @@ void Hypercube :: Queries(const vector<vector<double>>& queries,const vector<vec
                 }
             }            
 
-            double total_time_all = chrono::duration<double>(chrono::high_resolution_clock::now()-start_all).count();
-            double qps = (valid_q > 0) ? valid_q / total_time_all : 0.0;
+            // double total_time_all = chrono::duration<double>(chrono::high_resolution_clock::now()-start_all).count();
+            // double qps = (valid_q > 0) ? valid_q / total_time_all : 0.0;
 
             out<< "Average AF: " << Average_factor << endl;
             out<< "Recall@N: " << recall <<endl;
-            out << "QPS: " << qps << endl;
+            // out << "QPS: " << qps << endl;
             out << "tApproximateAverage: " << atime << endl;
             out << "tTrueAverage: " << etime << endl;
             out << "-------------------" << endl;
