@@ -1,5 +1,14 @@
-# Project Algorithms
+# Ανάπτυξη Λογισμικού για Αλγοριθμικά Προβλήματα 
+# 1η Προγραμματιστική Εργασία - Αναζήτηση διανυσμάτων στη C/C++
 
- g++ mnist.cpp -o mnist -lcurl -lz -std=c++17
- git pull --no-rebase origin main
+## Περιγρφή 
+Το project έχει υλοποιηθεί σε C++, η πειαματική ανάλυση σε python και υπάρχει ένα bash αρχείο το οποίο 
+χρησιμοποιείται για την πειραματική ανάλυση.
 
+** Υλοποιημένοι Αλγόριθμοι **
+1. LSH (Locality Sensitive Hashing)
+2. Hypercube (Τυχαία προβολή σε Υπερκύβο)
+3. IVFFlat (Inverted File Flat)
+4. IVFPQ (Inverted File Product Quantization)
+
+## Κατάλογος Αρχείων
