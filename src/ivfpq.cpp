@@ -289,11 +289,11 @@ void IVFPQ :: Queries(const vector<vector<double>>& query, const vector<vector<d
         double tra = total_exact_time/success_queries;
     
         out << "FINAL METRICS:" << endl;
-        out << "Average AF: " << avg_af << endl;
-        out << "Recall@N: " << avg_recall << endl;
+        out << "Total Average AF: " << avg_af << endl;
+        out << "Total Average Recall@N: " << avg_recall << endl;
         out << "QPS: " << qps << endl;
-        out << "tApproximate Time: " << taa << endl;
-        out << "tTrueAverage: " << tra << endl;
+        out << "Average Approximate Time: " << taa << endl;
+        out << "Average Exact Time: " << tra << endl;
     }
     // else{
     //     out << "AF: 0" << endl;

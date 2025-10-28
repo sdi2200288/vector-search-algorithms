@@ -262,7 +262,7 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
     out << "FINAL METRICS:" << endl;
     out << "Total Average AF: " << total_Average_factor / valid_q << endl;
     out << "Total Average Recall@N: " << total_recall / valid_q << endl;
-    out << "Overall QPS: " << qps << endl;
+    out << "QPS: " << qps << endl;
     out << "Average Approximate Time: " << total_atime / valid_q << endl;
     out << "Average Exact Time: " << total_etime / valid_q << endl;
     
