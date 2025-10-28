@@ -13,7 +13,9 @@
 1. algorithm_comparison_table.csv
 2. final_metrics_comparison.csv
 3. detailed_summary.csv
+
 , τα οποία περιέχουν τα δεδομένα από τα αποτελέσματα των αλγορίθων που χρειάζονται για την υλοποίηση της πειραματικής ανάλυσης, και οι εικόνες με τα γραφήματα:
+
 4. af_vs_recall_correlation.png
 5. algorithm_comparison.png
 6. correlation_matrix.png
