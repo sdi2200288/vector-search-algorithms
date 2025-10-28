@@ -40,7 +40,11 @@ def parse_final_metrics(output_file):
 def extract_final_metric(pattern, content):
     """Εξάγει την τιμή από το pattern για FINAL METRICS"""
     match = re.search(pattern, content)
-    return float(match.group(1)) if match else 0.0
+    # return float(match.group(1)) if match else 0.0
+    if match:
+        value_str = match.group(1).rstrip('.')  # 🔧 αφαιρεί τελεία στο τέλος
+        return float(value_str)
+    return 0.0
 
 def extract_params(output):
     """Εξάγει παραμέτρους από το όνομα του αρχείου"""
@@ -51,7 +55,7 @@ def extract_params(output):
     if 'lsh' in output_lower:
         k_match = re.search(r'k(\d+)', output_lower)
         L_match = re.search(r'l(\d+)', output_lower)
-        w_match = re.search(r'w([\d\.]+)', output_lower)
+        w_match = re.search(r'w(\d+(?:\.\d+)?)', output_lower)
         params.update({
             'k': int(k_match.group(1)) if k_match else 4,
             'L': int(L_match.group(1)) if L_match else 5,
@@ -63,7 +67,7 @@ def extract_params(output):
         kproj_match = re.search(r'kproj(\d+)', output_lower)
         m_match = re.search(r'm(\d+)', output_lower)
         probes_match = re.search(r'probes?(\d+)', output_lower)
-        w_match = re.search(r'w([\d\.]+)', output_lower)
+        w_match = re.search(r'w(\d+(?:\.\d+)?)', output_lower)
         params.update({
             'kproj': int(kproj_match.group(1)) if kproj_match else 14,
             'M': int(m_match.group(1)) if m_match else 10,
