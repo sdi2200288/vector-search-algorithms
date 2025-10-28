@@ -20,7 +20,22 @@ src/%.o: src/%.cpp
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
 
+bash:
+	chmod +x run_sift.sh
+
 # Run
+run_bash:
+	./run_sift.sh
+
+run_parse_results:
+	python3 experiment/parse_results.py
+
+run_create_plots:
+	python3 experiment/create_plots.py
+
+run_create_plots1:
+	python3 experiment/create_plots1.py
+
 run_lsh:
 	./$(TARGET) -d "../sift/sift_base.fvecs" -q "../sift/sift_query.fvecs" -k 10 -L 30 -w 1.5 -o lsh_output.dat -N 5 -R 200 -type sift -range true -lsh
 
@@ -35,6 +50,8 @@ run_ivfpq:
 
 # Clean
 clean:
-	rm -f $(OBJS) $(TARGET)  *.dat
+	rm -f $(OBJS) $(TARGET) *.dat 
+	
+#*.png *.csv
 
 .PHONY: all run clean
