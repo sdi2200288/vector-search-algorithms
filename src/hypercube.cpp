@@ -414,6 +414,21 @@ void Hypercube :: Queries(const vector<vector<double>>& queries,const vector<vec
         }     
     }
 
+    //υπολογισμος qps
+    auto total_time_all = chrono::high_resolution_clock::now();
+    double total_time = chrono::duration<double>(total_time_all - start_all).count();
+    double qps = queries.size() / total_time;
+    
+    out << "QPS: " << qps << endl;
+
+    // ΤΕΛΙΚΕΣ ΜΕΤΡΙΚΕΣ
+    out << "FINAL METRICS:" << endl;
+    out << "Total Average AF: " << total_Average_factor / valid_q << endl;
+    out << "Total Average Recall@N: " << total_recall / valid_q << endl;
+    out << "QPS: " << qps << endl;
+    out << "Average Approximate Time: " << total_atime / valid_q << endl;
+    out << "Average Exact Time: " << total_etime / valid_q << endl;
+
     out.close();
     cout<<"Complete Queries"<<endl;
 
