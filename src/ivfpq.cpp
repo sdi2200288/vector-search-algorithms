@@ -173,6 +173,8 @@ void IVFPQ :: Queries(const vector<vector<double>>& query, const vector<vector<d
     double total_exact_time = 0.0;
     int success_queries = 0;
 
+    auto start_all = chrono::high_resolution_clock::now();
+
     for(size_t i=0; i<query.size(); i++){
         const auto& q = query[i];
         
@@ -245,34 +247,61 @@ void IVFPQ :: Queries(const vector<vector<double>>& query, const vector<vector<d
             total_exact_time += exact_time;
             success_queries++;
         }
+        out << "-------------------" << endl;
 
-        out << endl;
+        // out << endl;
     
-        //Εγγραφή τελικών μετρικών
-        if(success_queries>0){
-            double avg_af = total_af/success_queries;
-            double avg_recall = total_recall/success_queries;
-            double qps = success_queries/total_approx_time;
-            double taa = total_approx_time/success_queries;
-            double tra = total_exact_time/success_queries;
+        // //Εγγραφή τελικών μετρικών
+        // if(success_queries>0){
+        //     double avg_af = total_af/success_queries;
+        //     double avg_recall = total_recall/success_queries;
+        //     double qps = success_queries/total_approx_time;
+        //     double taa = total_approx_time/success_queries;
+        //     double tra = total_exact_time/success_queries;
 
-            out << "Average AF: " << avg_af << endl;
-            out << "Recall@N: " << avg_recall << endl;
-            out << "QPS: " << qps << endl;
-            out << "tApproximateAverage: " << taa << endl;
-            out << "tTrueAverage: " << tra << endl;
-        }
-        else{
-            out << "Average AF: 0" << endl;
-            out << "Recall@N: 0" << endl;
-            out << "QPS: 0" << endl;
-            out << "tApproximateAverage: 0" << endl;
-            out << "tTrueAverage: 0" << endl;
-        }
+        //     out << "Average AF: " << avg_af << endl;
+        //     out << "Recall@N: " << avg_recall << endl;
+        //     out << "QPS: " << qps << endl;
+        //     out << "tApproximateAverage: " << taa << endl;
+        //     out << "tTrueAverage: " << tra << endl;
+        // }
+        // else{
+        //     out << "Average AF: 0" << endl;
+        //     out << "Recall@N: 0" << endl;
+        //     out << "QPS: 0" << endl;
+        //     out << "tApproximateAverage: 0" << endl;
+        //     out << "tTrueAverage: 0" << endl;
+        // }
 
-        out << endl;
+        // out << endl;
     
     }
+    
+    auto end_all = chrono::high_resolution_clock::now();
+    double total_time_all = chrono::duration<double>(end_all - start_all).count();
+    
+    //Εγγραφή τελικών μετρικών
+    if(success_queries>0){
+        double avg_af = total_af/success_queries;
+        double avg_recall = total_recall/success_queries;
+        double qps = query.size()/total_time_all;
+        double taa = total_approx_time/success_queries;
+        double tra = total_exact_time/success_queries;
+    
+        out << "FINAL METRICS:" << endl;
+        out << "Average AF: " << avg_af << endl;
+        out << "Recall@N: " << avg_recall << endl;
+        out << "QPS: " << qps << endl;
+        out << "tApproximate Time: " << taa << endl;
+        out << "tTrueAverage: " << tra << endl;
+    }
+    // else{
+    //     out << "AF: 0" << endl;
+    //     out << "Recall@N: 0" << endl;
+    //     out << "QPS: 0" << endl;
+    //     out << "tApproximateAverage: 0" << endl;
+    //     out << "tTrueAverage: 0" << endl;
+    // }
 
     out.close();
     cout << "Results written to: " << output_file << endl;
