@@ -11,3 +11,22 @@
 4. IVFPQ (Inverted File Product Quantization)
 
 ## Κατάλογος Αρχείων
+### Αρχεία πηγαίου κώδικα -> **src/**
+1. **lsh.cpp**         : υλοποίηση LSH αλγορίθμου
+2. **hypercube.cpp**   : υλοποίηση Hypercube αλγορίθμου
+3. **IVFFlat.cpp**     : υλοποίηση IVFFlat αλγορίθμου
+4. **ivfpq.cpp**       : υλοποίηση IVFPQ αλγορίθμου
+5. **ivfpq_index.cpp** : βοηθητική δομή για IVFPQ
+6. **k_means.cpp**     : αλγόριθμος k-means clustering
+7. **mnist_data.cpp**  : διαχείριση MNIST dataset
+8. **sift_data.cpp**   : διαχείριση SIFT dataset
+
+### Αρχεία επικεφαλίδας -> **include/**
+1. **hypercube.hpp**
+2. **IVFFlat.hpp**
+3. **ivfpq_index.hpp**
+4. **ivfpq.hpp**
+5. **k_means.hpp**
+6. **lsh.hpp**
+7. **mnist_data.hpp**
+8. **sift_data.hpp**
