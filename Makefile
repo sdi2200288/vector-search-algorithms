@@ -51,7 +51,6 @@ run_ivfpq:
 # Clean
 clean:
 	rm -f $(OBJS) $(TARGET) *.dat 
-	
 #*.png *.csv
 
 .PHONY: all run clean
