@@ -1,27 +1,27 @@
 Algorithm,Parameters,Dataset,Avg AF,Recall@N,QPS,Avg Approx Time (s),Avg Exact Time (s),File
-LSH,"k=4.0, L=5.0, w=4.0",SIFT,1.27057,0.0152,657.012,6.8507,0.00118874,lsh_L5.dat
-IVFFlat,"kclusters=50.0, nprobe=20.0",SIFT,0.0602311,0.978,470.611,0.000532456,0.00129195,ivfflat_nprobe20.dat
-IVFPQ,"kclusters=50.0, nprobe=5.0, M=8.0, nbits=8.0",SIFT,2.68196,0.7228,201.175,0.00343088,0.00127338,ivfpq_M8.dat
-LSH,"k=8.0, L=5.0, w=4.0",SIFT,1.12146,0.1124,390.039,0.000528989,0.00123558,lsh_k8.dat
-LSH,"k=6.0, L=5.0, w=4.0",SIFT,1.12574,0.1102,404.16,0.000451143,0.00125299,lsh_k6.dat
-IVFPQ,"kclusters=50.0, nprobe=5.0, M=16.0, nbits=8.0",SIFT,2.68893,0.6497,173.447,0.00343941,0.00207197,ivfpq_nprobe5.dat
-Hypercube,"kproj=14.0, M=100.0, probes=2.0",SIFT,1.14526,0.088,486.341,0.000234979,0.00158,hypercube_M100.dat
-LSH,"k=4.0, L=5.0, w=2.5",SIFT,1.11922,0.1172,483.014,0.000347525,0.00114375,lsh_w2.5.dat
-Hypercube,"kproj=14.0, M=10.0, probes=2.0",SIFT,1.3297,0.0136,603.507,0.000250322,0.00122741,hypercube_kproj14.dat
-LSH,"k=4.0, L=5.0, w=4.0",SIFT,1.11716,0.1186,472.213,0.000360958,0.00115038,lsh_k4.dat
-IVFPQ,"kclusters=50.0, nprobe=5.0, M=4.0, nbits=8.0",SIFT,1.92625,0.6747,122.513,0.00582351,0.00207781,ivfpq_M4.dat
-Hypercube,"kproj=14.0, M=10.0, probes=2.0",SIFT,1.15111,0.0784,623.774,0.000176825,0.00124745,hypercube_w4.5.dat
-Hypercube,"kproj=14.0, M=10.0, probes=2.0",SIFT,1.14956,0.0798,635.797,0.000173841,0.0012226,hypercube_w4.0.dat
-IVFFlat,"kclusters=50.0, nprobe=10.0",SIFT,0.0602558,0.8862,456.662,0.000483808,0.00137926,ivfflat_nprobe10.dat
-IVFPQ,"kclusters=50.0, nprobe=10.0, M=16.0, nbits=8.0",SIFT,2.68196,0.7228,93.9408,0.00773639,0.00256593,ivfpq_nprobe10.dat
-IVFFlat,"kclusters=50.0, nprobe=40.0",SIFT,0.0602281,0.9985,510.846,0.00057332,0.00114179,ivfflat_nprobe40.dat
-Hypercube,"kproj=14.0, M=150.0, probes=2.0",SIFT,1.14526,0.088,538.623,0.00021147,0.00143878,hypercube_M150.dat
-LSH,"k=4.0, L=5.0, w=2.0",SIFT,1.11848,0.1182,495.753,0.000342771,0.00111687,lsh_w2.0.dat
-Hypercube,"kproj=16.0, M=10.0, probes=2.0",SIFT,1.51352,0.0052,581.122,0.000348954,0.00120317,hypercube_kproj16.dat
-LSH,"k=4.0, L=3.0, w=4.0",SIFT,1.33041,0.0076,693.014,4.16887,0.00116795,lsh_L3.dat
-IVFPQ,"kclusters=50.0, nprobe=5.0, M=16.0, nbits=8.0",SIFT,3.67176,0.7547,118.361,0.00629623,0.00192119,ivfpq_M16.dat
-Hypercube,"kproj=10.0, M=10.0, probes=2.0",SIFT,1.21814,0.0332,654.642,0.000119934,0.00123142,hypercube_kproj10.dat
-IVFPQ,"kclusters=50.0, nprobe=20.0, M=16.0, nbits=8.0",SIFT,2.68086,0.7419,68.1012,0.0122653,0.00214829,ivfpq_nprobe20.dat
-LSH,"k=4.0, L=5.0, w=1.5",SIFT,1.11716,0.1186,475.486,0.000355728,0.00115604,lsh_w1.5.dat
-LSH,"k=4.0, L=10.0, w=4.0",SIFT,1.2093,0.0376,623.405,0.000128974,0.00115275,lsh_L10.dat
-IVFFlat,"kclusters=50.0, nprobe=5.0",SIFT,0.0603455,0.7088,551.448,0.000377473,0.00118936,ivfflat_nprobe5.dat
+LSH,"k=4.0, L=5.0, w=4.0",SIFT,1.27057,0.0152,827.474,4.88718,0.00099729,lsh_L5.dat
+IVFFlat,"kclusters=50.0, nprobe=20.0",SIFT,0.0602311,0.978,669.003,0.000361753,0.000975036,ivfflat_nprobe20.dat
+IVFPQ,"kclusters=50.0, nprobe=5.0, M=8.0, nbits=8.0",SIFT,2.68196,0.7228,270.719,0.00256706,0.000975288,ivfpq_M8.dat
+LSH,"k=8.0, L=5.0, w=4.0",SIFT,1.12146,0.1124,558.105,0.000363115,0.000959684,lsh_k8.dat
+LSH,"k=6.0, L=5.0, w=4.0",SIFT,1.12574,0.1102,581.273,0.000318017,0.00097017,lsh_k6.dat
+IVFPQ,"kclusters=50.0, nprobe=5.0, M=16.0, nbits=8.0",SIFT,2.68893,0.6497,215.826,0.00276749,0.00169543,ivfpq_nprobe5.dat
+Hypercube,"kproj=14.0, M=100.0, probes=2.0",SIFT,1.14526,0.088,787.498,0.000120029,0.00104309,hypercube_M100.dat
+LSH,"k=4.0, L=5.0, w=2.5",SIFT,1.11922,0.1172,592.708,0.000279904,0.000992678,lsh_w2.5.dat
+Hypercube,"kproj=14.0, M=10.0, probes=2.0",SIFT,1.3297,0.0136,736.977,0.000186926,0.00105801,hypercube_kproj14.dat
+LSH,"k=4.0, L=5.0, w=4.0",SIFT,1.11716,0.1186,607.299,0.000274185,0.000977055,lsh_k4.dat
+IVFPQ,"kclusters=50.0, nprobe=5.0, M=4.0, nbits=8.0",SIFT,1.92625,0.6747,291.937,0.00230062,0.000974255,ivfpq_M4.dat
+Hypercube,"kproj=14.0, M=10.0, probes=2.0",SIFT,1.15111,0.0784,781.006,0.000123388,0.00104905,hypercube_w4.5.dat
+Hypercube,"kproj=14.0, M=10.0, probes=2.0",SIFT,1.14956,0.0798,0.0,0.000122803,0.00105413,hypercube_w4.0.dat
+IVFFlat,"kclusters=50.0, nprobe=10.0",SIFT,0.0602558,0.8862,706.28,0.000306487,0.000956855,ivfflat_nprobe10.dat
+IVFPQ,"kclusters=50.0, nprobe=10.0, M=16.0, nbits=8.0",SIFT,2.68196,0.7228,265.248,0.00262956,0.00098579,ivfpq_nprobe10.dat
+IVFFlat,"kclusters=50.0, nprobe=40.0",SIFT,0.0602281,0.9985,617.516,0.000443783,0.00100193,ivfflat_nprobe40.dat
+Hypercube,"kproj=14.0, M=150.0, probes=2.0",SIFT,1.14526,0.088,783.043,0.000121465,0.00104967,hypercube_M150.dat
+LSH,"k=4.0, L=5.0, w=2.0",SIFT,1.11848,0.1182,624.223,0.000265948,0.000964242,lsh_w2.0.dat
+Hypercube,"kproj=16.0, M=10.0, probes=2.0",SIFT,1.51352,0.0052,705.824,0.000266506,0.001051,hypercube_kproj16.dat
+LSH,"k=4.0, L=3.0, w=4.0",SIFT,1.33041,0.0076,848.213,2.89618,0.00101484,lsh_L3.dat
+IVFPQ,"kclusters=50.0, nprobe=5.0, M=16.0, nbits=8.0",SIFT,3.67176,0.7547,132.239,0.00565249,0.00172872,ivfpq_M16.dat
+Hypercube,"kproj=10.0, M=10.0, probes=2.0",SIFT,1.21814,0.0332,777.424,9.20348,0.00107193,hypercube_kproj10.dat
+IVFPQ,"kclusters=50.0, nprobe=20.0, M=16.0, nbits=8.0",SIFT,2.68086,0.7419,85.354,0.00977399,0.00175381,ivfpq_nprobe20.dat
+LSH,"k=4.0, L=5.0, w=1.5",SIFT,1.11716,0.1186,606.681,0.000272589,0.000986219,lsh_w1.5.dat
+LSH,"k=4.0, L=10.0, w=4.0",SIFT,1.2093,0.0376,795.516,9.22189,0.000966854,lsh_L10.dat
+IVFFlat,"kclusters=50.0, nprobe=5.0",SIFT,0.0603455,0.7088,692.172,0.000295697,0.000976772,ivfflat_nprobe5.dat
