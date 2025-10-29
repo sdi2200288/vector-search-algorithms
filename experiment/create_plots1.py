@@ -337,39 +337,61 @@ def create_comparison_plots(df):
     plt.savefig('qps_by_algorithm.png', dpi=300, bbox_inches='tight')
     plt.close()
 
-    # 3. SCATTER PLOT: QPS vs Recall@N
+    # 3. BAR CHART: AF ανά αλγόριθμο
     plt.figure(figsize=(10, 6))
-    colors = {'LSH': 'red', 'Hypercube': 'blue', 'IVFFlat': 'green', 'IVFPQ': 'orange'}
-
-    for algo in df['Algorithm'].unique():
-        algo_data = df[df['Algorithm'] == algo]
-        plt.scatter(algo_data['QPS'], algo_data['Recall@N'],
-                    c=colors.get(algo, 'gray'), label=algo, alpha=0.7, s=100)
-
-    plt.xlabel('QPS (Queries Per Second)')
-    plt.ylabel('Recall@N')
-    plt.title('Trade-off: QPS vs Recall@N')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
+    af_by_algorithm = df.groupby('Algorithm')['Avg AF'].mean().sort_values(ascending=False)
+    af_by_algorithm.plot(kind='bar', color='lightcoral')
+    plt.title('Average AF by Algorithm')
+    plt.ylabel('Avg AF')
+    plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig('qps_vs_recall.png', dpi=300, bbox_inches='tight')
+    plt.savefig('af_by_algorithm.png', dpi=300, bbox_inches='tight')
     plt.close()
 
-    # 4. SCATTER PLOT: Avg AF vs QPS
+    # 4. BAR CHART: Avg Approx Time (s) ανά αλγόριθμο
     plt.figure(figsize=(10, 6))
-    for algo in df['Algorithm'].unique():
-        algo_data = df[df['Algorithm'] == algo]
-        plt.scatter(algo_data['QPS'], algo_data['Avg AF'],
-                    c=colors.get(algo, 'gray'), label=algo, alpha=0.7, s=100)
-
-    plt.xlabel('QPS (Queries Per Second)')
-    plt.ylabel('Average Approximation Factor')
-    plt.title('Trade-off: QPS vs Approximation Accuracy')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
+    approx_time_by_algorithm = df.groupby('Algorithm')['Avg Approx Time (s)'].mean().sort_values(ascending=False)
+    approx_time_by_algorithm.plot(kind='bar', color='lightblue')
+    plt.title('Avg Approx Time (s) by Algorithm')
+    plt.ylabel('Avg Approx Time (s)')
+    plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig('qps_vs_af.png', dpi=300, bbox_inches='tight')
+    plt.savefig('approx_time_by_algorithm.png', dpi=300, bbox_inches='tight')
     plt.close()
+
+    # # 3. SCATTER PLOT: QPS vs Recall@N
+    # plt.figure(figsize=(10, 6))
+    # colors = {'LSH': 'red', 'Hypercube': 'blue', 'IVFFlat': 'green', 'IVFPQ': 'orange'}
+
+    # for algo in df['Algorithm'].unique():
+    #     algo_data = df[df['Algorithm'] == algo]
+    #     plt.scatter(algo_data['QPS'], algo_data['Recall@N'],
+    #                 c=colors.get(algo, 'gray'), label=algo, alpha=0.7, s=100)
+
+    # plt.xlabel('QPS (Queries Per Second)')
+    # plt.ylabel('Recall@N')
+    # plt.title('Trade-off: QPS vs Recall@N')
+    # plt.legend()
+    # plt.grid(True, alpha=0.3)
+    # plt.tight_layout()
+    # plt.savefig('qps_vs_recall.png', dpi=300, bbox_inches='tight')
+    # plt.close()
+
+    # # 4. SCATTER PLOT: Avg AF vs QPS
+    # plt.figure(figsize=(10, 6))
+    # for algo in df['Algorithm'].unique():
+    #     algo_data = df[df['Algorithm'] == algo]
+    #     plt.scatter(algo_data['QPS'], algo_data['Avg AF'],
+    #                 c=colors.get(algo, 'gray'), label=algo, alpha=0.7, s=100)
+
+    # plt.xlabel('QPS (Queries Per Second)')
+    # plt.ylabel('Average Approximation Factor')
+    # plt.title('Trade-off: QPS vs Approximation Accuracy')
+    # plt.legend()
+    # plt.grid(True, alpha=0.3)
+    # plt.tight_layout()
+    # plt.savefig('qps_vs_af.png', dpi=300, bbox_inches='tight')
+    # plt.close()
 
 def analyze_parameter_effects(df):
     """Αναλύει την επίδραση των παραμέτρων"""
@@ -436,10 +458,10 @@ def main_analysis():
 
     # Δημιουργία γραφημάτων
     create_comparison_plots(df)
-    create_metric_comparison_matrix(df)  # Νέο function
+    # create_metric_comparison_matrix(df)  # Νέο function
     create_pairwise_comparisons(df)      # Νέο function
-    create_radar_chart(df)               # Νέο function
-    analyze_parameter_effects(df)
+    # create_radar_chart(df)               # Νέο function
+    # analyze_parameter_effects(df)
     generate_summary_statistics(df)
 
     # Αποθήκευση αναλυτικού πίνακα
