@@ -5,7 +5,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
-def create_pairwise_comparisons(df):
+def create_scatter_pairwise_comparisons(df):
     """Δημιουργεί ξεχωριστά scatter plots για κάθε ζεύγος μετρικών"""
     
     metrics_pairs = [
@@ -48,6 +48,73 @@ def create_pairwise_comparisons(df):
             filename = f'comparison_{metric_x.replace(" ", "_").replace("(", "").replace(")", "")}_vs_{metric_y.replace(" ", "_").replace("(", "").replace(")", "")}.png'
             plt.tight_layout()
             plt.savefig(filename, dpi=300, bbox_inches='tight')
+            plt.close()
+            print(f"✅ Saved {filename}")
+
+def create_bar_pairwise_comparisons(df):
+    """Δημιουργεί ξεχωριστά bar charts για κάθε ζεύγος μετρικών - ΧΩΡΙΣ error bars"""
+    
+    metrics_pairs = [
+        ('Recall@N', 'QPS'),
+        ('Recall@N', 'Avg AF'),
+        ('Recall@N', 'Avg Approx Time (s)'),
+        ('QPS', 'Avg AF'),
+        ('QPS', 'Avg Approx Time (s)'),
+        ('Avg AF', 'Avg Approx Time (s)'),
+        ('Avg Approx Time (s)', 'Avg Exact Time (s)')
+    ]
+    
+    colors = {'LSH': 'red', 'Hypercube': 'blue', 'IVFFlat': 'green', 'IVFPQ': 'orange'}
+    
+    for metric_x, metric_y in metrics_pairs:
+        if metric_x in df.columns and metric_y in df.columns:
+            fig, ax = plt.subplots(figsize=(12, 8))
+            
+            algorithms = df['Algorithm'].unique()
+            x_pos = np.arange(len(algorithms))
+            width = 0.35
+            
+            # Υπολογισμός μέσων όρων για κάθε αλγόριθμο
+            means_x = []
+            means_y = []
+            
+            for algo in algorithms:
+                algo_data = df[df['Algorithm'] == algo]
+                means_x.append(algo_data[metric_x].mean())
+                means_y.append(algo_data[metric_y].mean())
+            
+            # Δημιουργία ράβδων ΧΩΡΙΣ error bars
+            bars1 = ax.bar(x_pos - width/2, means_x, width, 
+                          label=metric_x, alpha=0.8, 
+                          color='skyblue')  # ΑΦΑΙΡΕΣΑ το yerr=std_x
+            
+            bars2 = ax.bar(x_pos + width/2, means_y, width, 
+                          label=metric_y, alpha=0.8, 
+                          color='lightcoral')  # ΑΦΑΙΡΕΣΑ το yerr=std_y
+            
+            ax.set_xlabel('Algorithms')
+            ax.set_ylabel('Metric Values')
+            ax.set_title(f'Comparison: {metric_x} vs {metric_y} by Algorithm')
+            ax.set_xticks(x_pos)
+            ax.set_xticklabels(algorithms, rotation=45)
+            ax.legend()
+            
+            # Απενεργοποίηση πλέγματος και πλαισίου
+            ax.grid(False)
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            
+            # Προσθήκη τιμών πάνω από τις ράβδους
+            for bars in [bars1, bars2]:
+                for bar in bars:
+                    height = bar.get_height()
+                    ax.text(bar.get_x() + bar.get_width()/2., height + 0.01 * max(means_x + means_y),
+                           f'{height:.3f}', ha='center', va='bottom', fontsize=8)
+            
+            plt.tight_layout()
+            filename = f'bar_comparison_{metric_x.replace(" ", "_").replace("(", "").replace(")", "")}_vs_{metric_y.replace(" ", "_").replace("(", "").replace(")", "")}.png'
+            plt.savefig(filename, dpi=300, bbox_inches='tight', 
+                       pad_inches=0.1, facecolor='white', edgecolor='none')
             plt.close()
             print(f"✅ Saved {filename}")
 
@@ -124,8 +191,9 @@ def main_analysis():
     print("📁 Columns found:", df.columns.tolist())
 
     # Δημιουργία γραφημάτων
+    create_scatter_pairwise_comparisons(df)
     create_comparison_plots(df)
-    create_pairwise_comparisons(df) 
+    create_bar_pairwise_comparisons(df)      
     generate_summary_statistics(df)
 
     # Αποθήκευση αναλυτικού πίνακα
