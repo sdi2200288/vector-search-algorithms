@@ -1,0 +1,18 @@
+Algorithm,Parameters,Dataset,Avg AF,Recall@N,QPS,Avg Approx Time (s),Avg Exact Time (s),File
+IVFPQ,"kclusters=50.0, nprobe=5.0, M=16.0, nbits=8.0",MNIST,2.45857,0.47377,1.40007,0.0231751,0.680094,ivfpq_nprobe5.dat
+Hypercube,"kproj=14.0, M=10.0, probes=2.0",MNIST,1.7113,0.00124,2.79375,0.000807456,0.356211,hypercube_kproj14.dat
+LSH,"k=6.0, L=5.0, w=4.0",MNIST,1.58275,0.00634,3.33473,0.00226256,0.295597,lsh_k6.dat
+IVFFlat,"kclusters=50.0, nprobe=5.0",MNIST,0.509712,0.97309,1.5125,0.0210274,0.516953,ivfflat_nprobe5.dat
+Hypercube,"kproj=14.0, M=10.0, probes=2.0",MNIST,1.63429,0.00452,2.13726,0.000980703,0.465992,hypercube_w4.5.dat
+Hypercube,"kproj=14.0, M=100.0, probes=2.0",MNIST,1.66389,0.00134,2.11043,0.000795968,0.47208,hypercube_M100.dat
+LSH,"k=4.0, L=3.0, w=4.0",MNIST,1.85274,0.00476,3.21007,0.000313802,0.310764,lsh_L3.dat
+LSH,"k=4.0, L=5.0, w=2.0",MNIST,1.29289,0.08224,3.25238,0.00290528,0.30237,lsh_w2.0.dat
+Hypercube,"kproj=14.0, M=150.0, probes=2.0",MNIST,1.59808,0.00216,1.78692,0.00123326,0.557233,hypercube_M150.dat
+IVFPQ,"kclusters=128.0, nprobe=5.0, M=16.0, nbits=8.0",MNIST,2.45016,0.48215,1.21737,0.0200728,0.797362,ivfpq_k128.dat
+LSH,"k=4.0, L=5.0, w=4.0",MNIST,1.40129,0.03906,3.40524,0.00272026,0.28917,lsh_k4.dat
+Hypercube,"kproj=10.0, M=10.0, probes=2.0",MNIST,1.66122,0.00174,2.77768,0.000876172,0.35788,hypercube_kproj10.dat
+Hypercube,"kproj=14.0, M=10.0, probes=2.0",MNIST,1.64027,0.00338,2.97276,0.000833104,0.33439,hypercube_w4.0.dat
+IVFFlat,"kclusters=50.0, nprobe=10.0",MNIST,0.509562,0.99379,2.30053,0.0370506,0.35285,ivfflat_nprobe10.dat
+LSH,"k=4.0, L=5.0, w=1.5",MNIST,1.40129,0.03906,2.7928,0.00352036,0.351974,lsh_w1.5.dat
+LSH,"k=4.0, L=5.0, w=4.0",MNIST,1.69269,0.00814,2.69254,0.00106753,0.369474,lsh_L5.dat
+IVFPQ,"kclusters=64.0, nprobe=5.0, M=16.0, nbits=8.0",MNIST,2.46477,0.46999,0.658554,0.0234317,1.48752,ivfpq_k64.dat
