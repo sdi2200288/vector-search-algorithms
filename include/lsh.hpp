@@ -1,3 +1,5 @@
+/* lsh.hpp */
+
 #ifndef LSH_HPP
 #define LSH_HPP
 
@@ -22,24 +24,20 @@ class lsh{
         int k, L, N, seed;
         double w, R;
         bool range;
-        int dimension; //128 ή 784
+        int dimension; 
         size_t dataset_n;
 
-        uint64_t M = 4294967291; // prime ~ 2^32-5
-        vector<vector<uint64_t>> random_r; // L x k
+        uint64_t M = 4294967291;            //prime ~ 2^32-5 για modulo operations
+        vector<vector<uint64_t>> random_r;  //τυχαίοι συντελεστές L x k για hash functions
         size_t tableSize = 0;
         
-        vector<unordered_map<int, vector<int>>> hashTables; // L hash-tables
-        vector<vector<vector<double>>> randomvectors; // [L][k][dimension]
-        vector<vector<double>> randomshifts;  //Τυχαίες μετατοπίσεις [L][k]
-
-        
+        vector<unordered_map<int, vector<int>>> hashTables; //L hash-tables [bucket_id -> λίστα point indices]
+        vector<vector<vector<double>>> randomvectors;       //τυχαία διανύσματα [L][k][dimension] για εσωτερικό γινόμενο
+        vector<vector<double>> randomshifts;                //τυχαίες μετατοπίσεις [L][k] για hash functions
 
     public:
         lsh(int seed1, string input_file1, string query_file1, string output_file1, int k1, int L1, double w1, int N1, double R1, string type1, bool range1);
         ~lsh();
-        
-        //void lsh_func(int seed, std::string input_file, std::string query_file, std::string output_file, int k, int L, float w, int N, float R, std::string type, bool range);
    
         void lsh_func(const vector<vector<double>>& dataset,const vector<vector<double>>& queries);
 

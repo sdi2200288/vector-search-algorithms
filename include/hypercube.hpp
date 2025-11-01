@@ -1,10 +1,12 @@
+/* hypercube.hpp */
+
 #ifndef HYPERCUBE_HPP
 #define HYPERCUBE_HPP
 
 #include <iostream>
 #include <vector>
 #include <unordered_map>
-#include <utility>      //για το pair
+#include <utility>      //βιβλιοθήκη για το pair
 
 using namespace std;
 
@@ -15,22 +17,21 @@ class Hypercube{
         double w, R;
         bool range;
 
-        vector<vector<double>> v;                   //LSH vector
-        vector<double> t;                           //LSH bias
-        unordered_map<string, vector<int>> h_map;   //hypercube structure
+        vector<vector<double>> v;                   //LSH vector για hash funcs
+        vector<double> t;                           //LSH bias τιμές για hash funcs
+        unordered_map<string, vector<int>> h_map;   //dομή hypercube (vertex -> λίστα point indices)
 
-        vector<vector<double>> dataset_reference;   //αποθήκευση dataset για queries
+        vector<vector<double>> dataset_reference;   //αποθήκευση dataset για αναφορά κατά τα queries
 
-        
-        double euclidean_distance(const vector<double>& v1, const vector<double>& v2);                       //υπολογίζει την Ευκλείδεια απόσταση μεταξύ δύο διανυσμάτων
+        double euclidean_distance(const vector<double>& v1, const vector<double>& v2);  //υπολογίζει την Ευκλείδεια απόσταση μεταξύ δύο διανυσμάτων
 
     public:
         Hypercube(int seed1, string input_file1, string query_file1, string output_file1, int kproj1, 
-            int M1, double w1, int N1, double R1, int probes1, string type1, bool range1);
-        ~Hypercube();
+            int M1, double w1, int N1, double R1, int probes1, string type1, bool range1);  
+        ~Hypercube();   
         void print_params();
 
-        int hypercube_dimension(const vector<vector<double>>& dataset, int kproj);
+        int hypercube_dimension(const vector<vector<double>>& dataset, int kproj);              
         
         const unordered_map<string, vector<int>>& get_h_map()const{return h_map;}
         const vector<vector<double>>& get_dataset_reference()const{return dataset_reference;}
@@ -39,7 +40,7 @@ class Hypercube{
         string project_to_hypercube(const vector<vector<double>>& dataset, const vector<double>& point);
         void build_index(const vector<vector<double>>& dataset);
         
-        vector<string> vertices_at_hamming_dist(const string& vertex, int target_dist, int max_vertices);     //βρίσκει όλες τις κορυφές με συγκεκριμένη Hamming απόσταση από μια κορυφή
+        vector<string> vertices_at_hamming_dist(const string& vertex, int target_dist, int max_vertices);     
 
         vector<pair<int, double>> exact_nearest_neighbors(const vector<double>& query);
         vector<pair<int, double>> approximate_nearest_neighbors(const vector<double>& query);
@@ -51,4 +52,3 @@ class Hypercube{
 };
 
 #endif
-

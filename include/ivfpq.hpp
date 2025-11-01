@@ -1,9 +1,11 @@
+/* ivfpq.hpp */
+
 #ifndef IVFPQ_HPP
 #define IVFPQ_HPP
 
 #include <iostream>
 #include <vector>
-#include <utility>      //για το pair
+#include <utility>     
 
 #include "ivfpq_index.hpp"
 
@@ -16,10 +18,10 @@ class IVFPQ{
         double R;
         bool range;
 
-        ivfpq_index* index;
-        vector<vector<double>> dataset_reference;
+        ivfpq_index* index;                         //δείκτης στο ivfpq_index
+        vector<vector<double>> dataset_reference;   //αποθήκευση αρχικού dataset
 
-        double euclidean_distance(const vector<double>& v1, const vector<double>& v2);
+        double euclidean_distance(const vector<double>& v1, const vector<double>& v2);   //υπολογισμός Ευκλείδειας απόστασης
 
     public:
         IVFPQ(string input_file1, string query_file1, string output_file1, string type1,

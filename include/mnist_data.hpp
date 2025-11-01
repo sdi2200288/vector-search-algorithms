@@ -1,3 +1,5 @@
+/* mnist_data.hpp */
+
 #ifndef MNIST_DATA_HPP
 #define MNIST_DATA_HPP
 

@@ -1,3 +1,5 @@
+/* ivfpq_index.hpp */
+
 #ifndef IVFPQ_INDEX_HPP
 #define IVFPQ_INDEX_HPP
 
@@ -12,20 +14,20 @@ using namespace std;
 class ivfpq_index{
     private:
         // for IVF
-        int k_clust;
-        vector<vector<double>> ivf_centr;
-        vector<vector<int>> inv_list;
+        int k_clust;                        //πλ΄ήθος cluster για IVF
+        vector<vector<double>> ivf_centr;   //κεντροειδή για IVF clustering
+        vector<vector<int>> inv_list;       //αντεστραμμένη λίστα [cluster_id -> λίστα point indices] 
         
         //for PQ
-        int M, nbits, sub_dim, dim;
-        vector<vector<vector<double>>> pq_codebook;
-        vector<vector<uint8_t>> pq_code;
+        int M, nbits, sub_dim, dim;                 
+        vector<vector<vector<double>>> pq_codebook; //PQ codebook [M][2^nbits][sub_dim]
+        vector<vector<uint8_t>> pq_code;            //PQ κωδικοί για κάθε point [point_id][M]
         
         // helpful funcs
-        vector<double> comp_residual(const vector<double>& point, const vector<double>& centroid) const;
-        vector<int> find_nearest_centr(const vector<double>& point, int nprobe) const;
-        double euclidean_distance(const vector<double>& a, const vector<double>& b) const;
-        vector<vector<double>> build_LUT(const vector<double>& query_residual) const;
+        vector<double> comp_residual(const vector<double>& point, const vector<double>& centroid) const;    //υπολογισμός υπολοίπου (point - centroid)
+        vector<int> find_nearest_centr(const vector<double>& point, int nprobe) const;                      //εύρεση nprobe πλησιέστερων κεντροειδών
+        double euclidean_distance(const vector<double>& a, const vector<double>& b) const;                  //υπολογισμός Ευκλείδειας απόστασης
+        vector<vector<double>> build_LUT(const vector<double>& query_residual) const;                       //δημιουργία Look-Up Table για γρήγορη απόσταση
 
     public:
         ivfpq_index(int k_clust, int M, int nbits, int dim);
