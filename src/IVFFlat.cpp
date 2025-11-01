@@ -1,4 +1,4 @@
-/* IVFFlat */
+/* IVFFlat.cpp */
 
 #include <iostream>
 #include <cmath>
@@ -13,6 +13,7 @@
 
 using namespace std;
 
+//Constructor
 IVFFlat::IVFFlat(int seed1, string input_file1, string query_file1, string output_file1, int kclusters1, int nprobe1, int N1, double R1, string type1, bool range1){
     seed = seed1;
     input_file = input_file1;
@@ -30,6 +31,7 @@ IVFFlat::IVFFlat(int seed1, string input_file1, string query_file1, string outpu
     cout << "IVFFlat Constructed!" << endl;
 }
 
+//Destructor
 IVFFlat :: ~IVFFlat(){
     centroids.clear();
     cluster_members.clear();
@@ -37,6 +39,7 @@ IVFFlat :: ~IVFFlat(){
     cout << "IVFFlat Deconstructed!" << endl;
 }
 
+//συνάρτηση που υπολογίζει την ευκλείδεια απόσταση
 double IVFFlat::euclidean_distance(const vector<double>& v1, const vector<double>& v2) {
     double sum = 0.0;
     for (size_t i = 0; i < v1.size(); i++) {
@@ -46,39 +49,40 @@ double IVFFlat::euclidean_distance(const vector<double>& v1, const vector<double
     return sqrt(sum);
 }
 
+//συνάρτηση που αρχικοποιεί δομές δεδομένων για IVFFlat
 void IVFFlat::Initialize(size_t dataset_n){
-    cout << "Initialize IVFFlat clusters" << endl;
+    // cout << "Initialize IVFFlat clusters" << endl;
     
     // Αρχικοποίηση δομών
     centroids.resize(kclusters);        //k κέντρα
     for(int i = 0; i < kclusters; i++) {
-        centroids[i].resize(dimension, 0.0);
+        centroids[i].resize(dimension, 0.0);    //κάθε centroid έχει διάσταση 'dimension'
     }
     cluster_members.resize(kclusters);  //k λιστες για τα μελη του καθε cluster
     
-    cout << "IVFFlat components initialized for " << kclusters << " clusters" << endl;
+    // cout << "IVFFlat components initialized for " << kclusters << " clusters" << endl;
 }
 
-//nprobe_count πλησιεστερους centroids σε ενα σημειο
+//συνάρτηση που κάνει εύρεση nprobe_count πλησιέστερων centroids σε ένα σημείο
 vector<int> IVFFlat::find_nearest_centroids(const vector<double>& p, int nprobe_count){
     vector<pair<double,int>> distances; //αποστασεις των centroids
 
     for(size_t i = 0; i < centroids.size(); i++){   //αποσταση απο καθε centroid
         double dist = euclidean_distance(p,centroids[i]);
-        distances.push_back({dist,i});
+        distances.push_back({dist,i});      //αποθήκευση (απόσταση, index)
     }
     
-    sort(distances.begin(),distances.end());
+    sort(distances.begin(),distances.end());    //ταξινόμηση κατά αύξουσα απόσταση
 
     vector<int> result; //επιστροφη των probe_count πλησιετερων centroids
     int count = min(nprobe_count , (int)distances.size());  //μη υοερβαση οριου
     for(int i = 0; i < count; i++){
-        result.push_back(distances[i].second);
+        result.push_back(distances[i].second);  //προσθήκη index των πλησιέστερων
     }
     return result;
 }
 
-//Πλησιεστερο centroid σε ενα σημειο
+//συνάρτηση που κάνει εύρεση του πλησιέστερου centroid σε ένα σημείο
 int IVFFlat::find_nearest_centroid(const vector<double>& p){
     int nearest_i = 0;                                          //index του πλησιεστεροθ
     double best_distance = euclidean_distance(p,centroids[0]);  //αποσταση απο το 1ο centroid
@@ -94,10 +98,9 @@ int IVFFlat::find_nearest_centroid(const vector<double>& p){
     return nearest_i;
 }
 
-double IVFFlat::calculate_silhouette() {
-    // ΠΡΟΣΟΧΗ: Αυτή η function είναι ΠΟΛΥ ΒΑΡΥ
-    // Μπορείς να την απενεργοποιήσεις ή να χρησιμοποιήσεις μόνο sample
-    cout << "Calculating Silhouette (this may take a while...)";
+////συνάρτηση που υπολογίζει το silhouette score για ποιότητα clustering
+double IVFFlat::calculate_silhouette(){
+    // cout << "Calculating Silhouette (this may take a while...)";
     
     // ΧΡΗΣΗ SAMPLE για ταχύτητα
     int sample_size = min(100, (int)dataset_reference.size());
@@ -106,11 +109,11 @@ double IVFFlat::calculate_silhouette() {
     default_random_engine gen(seed);
     uniform_int_distribution<int> dist(0, dataset_reference.size()-1);
     
-    for(int s = 0; s < sample_size; s++) {
-        int idx = dist(gen);
+    for(int s = 0; s < sample_size; s++){
+        int idx = dist(gen);    //τυχαίο δείγμα
         const auto& point = dataset_reference[idx];
         
-        // Find which cluster this point belongs to
+        //εύρεση cluster στο οποίο ανήκει το σημείο
         int cluster_id = -1;
         for(int i = 0; i < kclusters; i++) {
             if(find(cluster_members[i].begin(), cluster_members[i].end(), idx) != cluster_members[i].end()) {
@@ -123,7 +126,7 @@ double IVFFlat::calculate_silhouette() {
         // Υπολογισμός a_i (μέση απόσταση στον ίδιο cluster)
         double a_i = 0.0;
         int same_cluster_count = 0;
-        for(int neighbor_idx : cluster_members[cluster_id]) {
+        for(int neighbor_idx : cluster_members[cluster_id]){
             if(neighbor_idx != idx) {
                 a_i += euclidean_distance(point, dataset_reference[neighbor_idx]);
                 same_cluster_count++;
@@ -133,34 +136,32 @@ double IVFFlat::calculate_silhouette() {
         
         // Υπολογισμός b_i (ελάχιστη μέση απόσταση από άλλα clusters)
         double b_i = numeric_limits<double>::max();
-        for(int other_cluster = 0; other_cluster < kclusters; other_cluster++) {
+        for(int other_cluster = 0; other_cluster < kclusters; other_cluster++){
             if(other_cluster == cluster_id) continue;
             
             double dist_to_cluster = 0.0;
             int other_count = 0;
             // Sample από άλλο cluster για ταχύτητα
             int sample_count = min(10, (int)cluster_members[other_cluster].size());
-            for(int k = 0; k < sample_count; k++) {
+            for(int k = 0; k < sample_count; k++){
                 int sample_idx = uniform_int_distribution<int>(0, cluster_members[other_cluster].size()-1)(gen);
                 dist_to_cluster += euclidean_distance(point, dataset_reference[cluster_members[other_cluster][sample_idx]]);
                 other_count++;
             }
-            if(other_count > 0) {
+            if(other_count > 0) 
                 b_i = min(b_i, dist_to_cluster / other_count);
-            }
         }
         
-        if(max(a_i, b_i) > 0) {
+        if(max(a_i, b_i) > 0)   //υπολογισμός silhouette για το τρέχον σημείο
             total_silhouette += (b_i - a_i) / max(a_i, b_i);
-        }
     }
     
-    return total_silhouette / sample_size;
+    return total_silhouette / sample_size;  //μέσος όρος silhouette
 }
 
-
+//συνάρτηση για τη δημιουργία clusters με k-means algorithm
 void IVFFlat::CreateClusters(const vector<vector<double>>& dataset){
-    cout << "Creating " << kclusters << " clusters with " << dataset.size() << " vectors" << endl;
+    // cout << "Creating " << kclusters << " clusters with " << dataset.size() << " vectors" << endl;
     dataset_reference = dataset;
     
     default_random_engine generator(seed);
@@ -173,26 +174,25 @@ void IVFFlat::CreateClusters(const vector<vector<double>>& dataset){
         do {
             random_idx = uniform_int_distribution<int>(0, dataset.size()-1)(generator);
             attempts++;
-            if(attempts > static_cast<int>(dataset.size())) break; // Avoid infinite loop
+            if(attempts > static_cast<int>(dataset.size())) break; //αποφυγή infinite loop
         } while(find(selected_indices.begin(), selected_indices.end(), random_idx) != selected_indices.end());
         
         selected_indices.push_back(random_idx);
-        centroids[i] = dataset[random_idx];
+        centroids[i] = dataset[random_idx];     //aρχικοποίηση centroid με τυχαίο σημείο
     }
 
-    // K-MEANS ΜΕ EARLY STOPPING
+    //K-MEANS ΜΕ EARLY STOPPING
     for(int iteration = 0; iteration < 20; iteration++){
-        // Clear clusters
-        for(int i = 0; i < kclusters; i++){
+        //Clear clusters
+        for(int i = 0; i < kclusters; i++)
             cluster_members[i].clear();
-        }
 
-        // Assign points - ΒΕΛΤΙΩΣΗ: Προ-δεσμευση μνήμης
-        for(int i = 0; i < kclusters; i++){
+        //Assign points
+        for(int i = 0; i < kclusters; i++)
             cluster_members[i].reserve(dataset.size() / kclusters + 10);
-        }
-        
-        for(size_t j = 0; j < dataset.size(); j++){
+       
+        // Αντιστοίχιση σημείων στους πλησιέστερους centroids
+        for(size_t j = 0; j < dataset.size(); j++){ 
             int nearest = find_nearest_centroid(dataset[j]);
             cluster_members[nearest].push_back(j);
         }
@@ -203,42 +203,41 @@ void IVFFlat::CreateClusters(const vector<vector<double>>& dataset){
             if(cluster_members[i].empty()) continue;
             
             vector<double> new_centroid(dimension, 0.0);
-            for(int idx : cluster_members[i]){
-                for(int d = 0; d < dimension; d++){
-                    new_centroid[d] += dataset[idx][d];
-                }
-            }
-            for(int d = 0; d < dimension; d++){
-                new_centroid[d] /= cluster_members[i].size();
-            }
+            for(int idx : cluster_members[i])
+                for(int d = 0; d < dimension; d++)
+                    new_centroid[d] += dataset[idx][d];     //άθροισμα συντεταγμένων
+             
+            for(int d = 0; d < dimension; d++)
+                new_centroid[d] /= cluster_members[i].size();   //μέσος όρος για νέο centroid
             
-            // Check for changes
-            if(euclidean_distance(centroids[i], new_centroid) > 0.001) {
+            //Check for changes
+            if(euclidean_distance(centroids[i], new_centroid) > 0.001) 
                 changed = true;
-            }
+
             centroids[i] = new_centroid;
         }
 
-        // Early stopping
+        //early stopping αν δεν άλλαξαν τα centroids
         if(iteration > 5 && !changed) {
-            cout << "Converged at iteration " << iteration << endl;
+            // cout << "Converged at iteration " << iteration << endl;
             break;
         }
         
-        // Progress reporting
-        if(iteration % 5 == 0) {
-            cout << "Iteration " << iteration << " - Total points assigned: " << dataset.size() << endl;
-        }
+        //Progress reporting
+        // if(iteration % 5 == 0) {
+        //     cout << "Iteration " << iteration << " - Total points assigned: " << dataset.size() << endl;
+        // }
     }
 
     // Final report
-    cout << "Final cluster sizes: ";
-    for(int i = 0; i < kclusters; i++){
-        cout << cluster_members[i].size() << " ";
-    }
-    cout << endl;
+    // cout << "Final cluster sizes: ";
+    // for(int i = 0; i < kclusters; i++){
+    //     cout << cluster_members[i].size() << " ";
+    // }
+    // cout << endl;
 }
 
+//συνάρτηση που κάνει προσεγγιστική αναζήτηση πλησιέστερων γειτόνων
 vector<pair<int, double>> IVFFlat::ANN(const vector<vector<double>>& dataset,const vector<double>& query){
 
     // ΒΗΜΑ 1: Υπολογισμός απόστασης από όλα τα centroids
@@ -247,14 +246,14 @@ vector<pair<int, double>> IVFFlat::ANN(const vector<vector<double>>& dataset,con
     // ΒΗΜΑ 2: Ένωση λιστών ΜΕ RESERVE
     vector<int> candidates;  
     size_t total_size = 0;
-    for(int i : candidate_set) {
+    for(int i : candidate_set) 
         total_size += cluster_members[i].size();
-    }
+    
     candidates.reserve(total_size);
     
-    for(int i : candidate_set){
+    for(int i : candidate_set)
         candidates.insert(candidates.end(), cluster_members[i].begin(), cluster_members[i].end());
-    }
+    
 
     // ΒΗΜΑ 3: Χρήση max-heap για τους N πλησιέστερους
     priority_queue<pair<double, int>> max_heap; // (distance, index)
@@ -262,9 +261,9 @@ vector<pair<int, double>> IVFFlat::ANN(const vector<vector<double>>& dataset,con
     for(int j : candidates){
         double dist_sq = euclidean_distance(query, dataset_reference[j]); // squared distance
         
-        if(max_heap.size() < static_cast<size_t>(N)) {
+        if(max_heap.size() < static_cast<size_t>(N)) 
             max_heap.push({dist_sq, j});
-        } else if(dist_sq < max_heap.top().first) {
+        else if(dist_sq < max_heap.top().first) {
             max_heap.pop();
             max_heap.push({dist_sq, j});
         }
@@ -283,6 +282,7 @@ vector<pair<int, double>> IVFFlat::ANN(const vector<vector<double>>& dataset,con
     return result;
 }
 
+//συνάρτηση που κάνει ακριβή αναζήτηση πλησιέστερων γειτόνων
 vector<pair<int, double>> IVFFlat::ENN(const vector<vector<double>>& dataset,const vector<double>& query){
     vector<pair<int,double>> all_distances;
     
@@ -295,24 +295,24 @@ vector<pair<int, double>> IVFFlat::ENN(const vector<vector<double>>& dataset,con
     sort(all_distances.begin(),all_distances.end(),[](const auto& a, const auto& b) { return a.second < b.second; });
 
     //διατηρηση μονο των Ν πλησιεστερων
-    if( all_distances.size() > static_cast<size_t>(N)){
+    if( all_distances.size() > static_cast<size_t>(N))
         all_distances.resize(N);
-    }
+    
     return all_distances;
 }
 
+//συνάρτηση που κάνει προσεγγιστική range search
 vector<int> IVFFlat::ARange_Search(const vector<vector<double>>& dataset, const vector<double>& query){
     vector<int> range_neighbors;
     
     // nprobe πλησιέστερους centroids
     vector<int> candidate_centroids = find_nearest_centroids(query, nprobe);
-    cout << "Candidate centroids: " << candidate_centroids.size() << endl;
+    // cout << "Candidate centroids: " << candidate_centroids.size() << endl;
 
     // Συλλογή candidates από όλα τα clusters
     vector<int> candidate_set;   
-    for(int i : candidate_centroids){
+    for(int i : candidate_centroids)
        candidate_set.insert(candidate_set.end(), cluster_members[i].begin(), cluster_members[i].end());
-    }
 
     // Έλεγχος μόνο των candidates - εντός ακτίνας
     int checked = 0;
@@ -342,8 +342,9 @@ vector<int> IVFFlat::ARange_Search(const vector<vector<double>>& dataset, const 
 //     return range_neighbors;
 // }
 
+//συνάρτηση που κάνει επεξεργασία όλων των queries και αποθήκευση αποτελεσμάτων
 void  IVFFlat::Queries(const vector<vector<double>>& dataset,const vector<vector<double>>& queries){
-    cout << "Calculate IVFFlat Queries" << endl;
+    // cout << "Calculate IVFFlat Queries" << endl;
 
     ofstream out(output_file);
     if(!out.is_open()){
@@ -361,9 +362,6 @@ void  IVFFlat::Queries(const vector<vector<double>>& dataset,const vector<vector
     
     //Επεξεργασια καθε query
     for(size_t i = 0; i < queries.size(); i++){
-        if(i % 100 == 0) {
-            cout << "Processed " << i << "/" << queries.size() << " queries" << endl;
-        }
         const auto& q = queries[i]; //τρεχον query
 
         //Προσεγγιστική αναζήτηση
@@ -400,11 +398,11 @@ void  IVFFlat::Queries(const vector<vector<double>>& dataset,const vector<vector
 
             // Calculate metrics
             double Average_factor = 0.0;    //(AF) - Πόσο καλή είναι η προσέγγιση
-            if(eNN[0].second > 0){
+            if(eNN[0].second > 0)
                 Average_factor = aNN[0].second / eNN[0].second;
-            }else if(aNN[0].second == 0){
+            else if(aNN[0].second == 0)
                 Average_factor = 1.0;
-            }
+            
             total_Average_factor += Average_factor;
             
             int recall_hits = 0; // Recall@N - Ποσοστό επιτυχίας στην εύρεση των πραγματικών γειτόνων
@@ -427,14 +425,11 @@ void  IVFFlat::Queries(const vector<vector<double>>& dataset,const vector<vector
                                 
                 out << "R-near neighbors:";
                 if(aRN.empty()){
-                    //out << endl;
-                }else{
-                    for(int id: aRN){
-                        out << id << endl;
-                    }
+                    out << endl;
                 }
-
-              
+                else
+                    for(int id: aRN)
+                        out << id << endl;
             }
 
             out<< "Average AF: " << Average_factor << endl;
@@ -462,32 +457,35 @@ void  IVFFlat::Queries(const vector<vector<double>>& dataset,const vector<vector
     out << "Average Exact Time: " << total_etime / valid_q << endl;
 
     out.close();
-    cout<<"Complete Queries"<<endl;
+    // cout<<"Complete Queries"<<endl;
 }
 
+//συνάρτηση που κάνει την κύρια λειτουργία IVFFlat
 void IVFFlat::ivfflat_func(const vector<vector<double>>& dataset, const vector<vector<double>>& queries){
-    if (dataset.empty()) {
+    //έλεγχος εγκυρότητας δεδομένων
+    if (dataset.empty()){  
         cerr << "Error: Dataset is empty" << endl;
         return;
     }
-    if (queries.empty()) {
+
+    if (queries.empty()){
         cerr << "Error: Query set is empty" << endl;
         return;
     }
     
-    cout << "IVFFlat Algorithm" << endl;
-    cout << "Dataset size: " << dataset.size() << " vectors" << endl;
-    cout << "Vector dimension: " << dataset[0].size() << endl;
+    // cout << "IVFFlat Algorithm" << endl;
+    // cout << "Dataset size: " << dataset.size() << " vectors" << endl;
+    // cout << "Vector dimension: " << dataset[0].size() << endl;
 
     Initialize(dataset.size());     //1.Αρχικοποιηση δομων
     CreateClusters(dataset);        //2. Δημιουργία clusters με k-means
     Queries(dataset,queries);       //3. Εκτέλεση queries και υπολογισμός μετρικών
     
     double silhouette = calculate_silhouette();
-    cout << "Silhouette Score for k=" << kclusters << ": " << silhouette << endl;
-    
+    // cout << "Silhouette Score for k=" << kclusters << ": " << silhouette << endl;  
 }
 
+//συνάρτηση που εμφανίζει τις παραμέτρους 
 void IVFFlat :: print_params() {
     std::cout << "input_file: " << input_file << "\n"
               << "query_file: " << query_file << "\n"
