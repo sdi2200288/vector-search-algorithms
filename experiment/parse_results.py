@@ -1,4 +1,4 @@
-# SCRIPT ΕΞΑΓΩΓΗΣ ΜΕΤΡΙΚΩΝ ΑΠΟ OUTPUT FILES
+#SCRIPT ΕΞΑΓΩΓΗΣ ΜΕΤΡΙΚΩΝ ΑΠΟ OUTPUT FILES
 
 import os               #βιβλιοθήκη για λειτουργίες αρχείων και φακέλων
 import pandas as pd     #βιβλιοθήκη για χειρισμό δεδομένων και dataframe
