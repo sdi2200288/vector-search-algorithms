@@ -14,18 +14,20 @@ vector<vector<float>> read_sift_file(const string& filename){
     ifstream file(filename, ios::binary);
     if (!file.is_open()) {
         cerr << "❌ Error: Cannot open file " << filename << endl;
-        return {};
+        return {}; // επιστροφή κενού vector αντί για crash
     }
 
     vector<vector<float>> data;
     int32_t d = 0;
 
+    // ανάγνωση binary format με έλεγχο ορθότητας
     while (file.read(reinterpret_cast<char*>(&d), sizeof(int32_t))){
-        if (d != 128) {
+        if (d != 128) { // έλεγχος ότι η διάσταση είναι 128 
             cerr << "⚠️ Unexpected dimension: " << d << endl;
             break;
         }
         vector<float> vec(d);
+        //  έλεγχος για truncated file
         if (!file.read(reinterpret_cast<char*>(vec.data()), d * sizeof(float))){
             // truncated vector at end-of-file
             break;

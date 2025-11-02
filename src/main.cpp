@@ -15,7 +15,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]){
-    // Flags για το ποιός αλγόριθμος θα τρ΄έξει
+    // Flags για το ποιός αλγόριθμος θα τρέξει (μονο ενας μπορει να ειναι true καθε φορα)
     bool use_lsh = false;
     bool use_hypercube = false; 
     bool use_ivfflat = false;
@@ -61,6 +61,7 @@ int main(int argc, char* argv[]){
         vector<vector<float>> float_data = return_mnist_data(input_file);
         vector<vector<float>> float_queries = return_mnist_queries(query_file);
         
+        //μετατροπη data float->double ώστε να ειναι συμβατά με όλους τους αλγόριθμους
         dataset.resize(float_data.size());
         for(size_t i = 0; i < float_data.size(); i++){
             dataset[i].assign(float_data[i].begin(), float_data[i].end());
@@ -89,7 +90,7 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    // Έλεγχος data
+    // Έλεγχος οτι τα data φορτωθηκαν σωστα
     if(!dataset.empty()){
         cout << "Data size: " << dataset.size() << " vectors x " << dataset[0].size() << " dimensions" << endl;
     }
@@ -97,6 +98,7 @@ int main(int argc, char* argv[]){
     if(use_lsh){
         cout << "\n>>> Running LSH Algorithm...\n";
 
+        // Default τιμές για παραμέτρους
         int k = 10, L = 30, N = 5, seed = 1;
         double w = 1.5, R;
         bool range = false, R_flag = false;
@@ -116,6 +118,7 @@ int main(int argc, char* argv[]){
             }
         }
         
+        // Dataset-specific default τιμές για R
         if(!R_flag){
             if(type == "mnist") R = 2000.0;
             else if(type == "sift") R = 2.0;
