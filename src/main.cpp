@@ -52,7 +52,7 @@ int main(int argc, char* argv[]){
         } 
     }
 
-    //Διαβαζει από τα αρχεία ανάλογα με το type και αποθηκεύει στα vector
+    //διαβαζει από τα αρχεία ανάλογα με το type και αποθηκεύει στα vector
     vector<vector<double>> dataset;
     vector<vector<double>> queries;
     
@@ -63,13 +63,13 @@ int main(int argc, char* argv[]){
         
         //μετατροπη data float->double ώστε να ειναι συμβατά με όλους τους αλγόριθμους
         dataset.resize(float_data.size());
-        for(size_t i = 0; i < float_data.size(); i++){
+        for(size_t i = 0; i < float_data.size(); i++)
             dataset[i].assign(float_data[i].begin(), float_data[i].end());
-        }
+        
         queries.resize(float_queries.size());
-        for(size_t i = 0; i < float_queries.size(); i++){
+        for(size_t i = 0; i < float_queries.size(); i++)
             queries[i].assign(float_queries[i].begin(), float_queries[i].end());
-        }  
+        
     }
     else if(type == "sift"){
         cout << "SIFT: " << endl;
@@ -77,23 +77,22 @@ int main(int argc, char* argv[]){
         vector<vector<float>> float_queries = return_sift_queries(query_file);
         
         dataset.resize(float_data.size());
-        for(size_t i = 0; i < float_data.size(); i++) {
+        for(size_t i = 0; i < float_data.size(); i++) 
             dataset[i].assign(float_data[i].begin(), float_data[i].end());
-        }
+        
         queries.resize(float_queries.size());
-        for(size_t i = 0; i < float_queries.size(); i++) {
+        for(size_t i = 0; i < float_queries.size(); i++) 
             queries[i].assign(float_queries[i].begin(), float_queries[i].end());
-        }
+        
     }
     else{
         cerr<<"Unknown type"<<endl;
         return 1;
     }
 
-    // Έλεγχος οτι τα data φορτωθηκαν σωστα
-    if(!dataset.empty()){
+    //έλεγχος οτι τα data φορτωθηκαν σωστα
+    if(!dataset.empty())
         cout << "Data size: " << dataset.size() << " vectors x " << dataset[0].size() << " dimensions" << endl;
-    }
 
     if(use_lsh){
         cout << "\n>>> Running LSH Algorithm...\n";
@@ -221,9 +220,8 @@ int main(int argc, char* argv[]){
         ivfpq.print_params();
         ivfpq.ivfpq_func(dataset, queries);
     }
-    else {
+    else 
         cerr << "Error: You must specify an algorithm flag (-lsh, -hypercube, or -ivfflat)\n";
-    }
 
     return 0;
 }
