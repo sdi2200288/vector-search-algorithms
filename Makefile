@@ -20,12 +20,18 @@ src/%.o: src/%.cpp
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
 
-bash:
+sift_bash:
 	chmod +x run_sift.sh
 
+mnist_bash:
+	chmod +x run_mnist.sh
+
 # Run
-run_bash:
+run_sift_bash:
 	./run_sift.sh
+
+run_mnist_bash:
+	./run_mnist.sh
 
 run_parse_results:
 	python3 experiment/parse_results.py
@@ -34,7 +40,7 @@ run_create_plots:
 	python3 experiment/create_plots.py
 
 run_lsh:
-	./$(TARGET) -d "../sift/sift_base.fvecs" -q "../sift/sift_query.fvecs" -k 10 -L 30 -w 1.5 -o lsh_output.dat -N 5 -R 200 -type sift -range true -lsh
+	./$(TARGET) -d "../mnist_data/train-imges-idx3-ubyte" -q "../mnist_data/t10k-imges-idx3-ubyte" -k 10 -L 30 -w 1.5 -o lsh_output.dat -N 5 -R 2 -type mnist -range true -lsh
 
 run_hypercube:
 	./$(TARGET) -d "../sift/sift_base.fvecs" -q "../sift/sift_query.fvecs" -kproj 8 -w 1.0 -M 100 -probes 20 -o hyp_output.dat -N 5 -R 200 -type sift -range false -hypercube
@@ -47,7 +53,7 @@ run_ivfpq:
 
 # Clean
 clean:
-	rm -f $(OBJS) $(TARGET) *.dat 
-#*.png *.csv
+	rm -f $(OBJS) $(TARGET) *.dat *.png *.csv
 
 .PHONY: all run clean
+
