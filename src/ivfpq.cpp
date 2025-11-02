@@ -13,6 +13,7 @@
 
 using namespace std;
 
+//constructor
 IVFPQ :: IVFPQ(string input_file1, string query_file1, string output_file1, string type1, int kclusters1, int nprobe1, int M1, int N1, int seed1, int nbits1, double R1, bool range1){
     input_file = input_file1;
     query_file = query_file1;
@@ -32,14 +33,15 @@ IVFPQ :: IVFPQ(string input_file1, string query_file1, string output_file1, stri
     cout << "IVFPQ Constructed!" << endl;
 }
 
+//destructor
 IVFPQ :: ~IVFPQ(){
-    if(index != nullptr){
+    if(index != nullptr)
         delete index;
-    }
 
     cout << "IVFPQ Deconstructed!" << endl;
 }
 
+//συνάρτηση που εμφανίζει τις παραμέτρους 
 void IVFPQ :: print_params(){
     cout << "input_file: " << input_file << "\n" << "query_file: " << query_file << "\n" 
          << "output_file: " << output_file << "\n" << "type: " << type << "\n" 
@@ -48,10 +50,10 @@ void IVFPQ :: print_params(){
          << "\n" << "R: " << R << "\n" << "range: " << boolalpha << range << "\n";
 }
 
+//συνάρτηση που υπολογίζει την ευκλείδεια απόσταση μεταξύ 2 διανυσμάτων 
 double IVFPQ :: euclidean_distance(const vector<double>& v1, const vector<double>& v2){
-    if(v1.size() != v2.size()){
+    if(v1.size() != v2.size())
         throw invalid_argument("Vectors of diffenrent dimensions!");
-    }
 
     double dist = 0.0;
     for(size_t i=0; i<v1.size(); i++){
@@ -62,111 +64,99 @@ double IVFPQ :: euclidean_distance(const vector<double>& v1, const vector<double
     return sqrt(dist);
 }
 
+//συνάρτηση που κατασκευάζει το ivfpq ευρετήριο πό το dataset
 void IVFPQ :: build_index(const vector<vector<double>>& dataset){
-    cout << "Building IVFPQ index..." << endl;
+    // cout << "Building IVFPQ index..." << endl;
     
-    if(dataset.empty()){
+    if(dataset.empty())
         throw invalid_argument("Cannot build index with empty dataset!");
-    }
 
+    //αποθήκευση αναφοράς dataset για μελλοντική χρήση 
     dataset_reference = dataset;
     int dim = dataset[0].size();
-    index = new ivfpq_index(kclusters, M, nbits, dim);
-    index->build(dataset);
 
-    cout << "IVFPQ Index built successfully!" << endl;
+    //δημιουργία νέου ivfpq_index αντικειμένου
+    index = new ivfpq_index(kclusters, M, nbits, dim);
+    index->build(dataset);  //κατασκευή ευρετηρίου
+
+    // cout << "IVFPQ Index built successfully!" << endl;
 }
 
+//συνάρτηση που κάνει προσεγγιστική αναζήτηση πλησιέστερων γειτόνων
 vector<pair<int, double>> IVFPQ :: approximate_nearest_neighbors(const vector<double>& query){
-    if(index == nullptr){
+    if(index == nullptr)
         throw runtime_error("IVFPQ Index not built yet!");
-    }
 
-    auto ivfpq_res = index->Query(query, nprobe, N);
+    auto ivfpq_res = index->Query(query, nprobe, N);    //κλήση μεθόδου Query του ivfpq_index
     vector<pair<int, double>> res;
 
-    for(const auto& i : ivfpq_res){
+    for(const auto& i : ivfpq_res)      //μετατροπή αποτελεσμάτων από (distance, index) σε (index, distance)
         res.emplace_back(i.second, i.first);
-    }
 
     return res;
 }
 
+//συνάρτηση που κάνει ακριβή αναζήτηση πλησιέστερων γειτόνων
 vector<pair<int, double>> IVFPQ :: exact_nearest_neighbors(const vector<double>& query){
-    vector<pair<double, int>> dists;
+    vector<pair<double, int>> dists;    //(απόσταση, index)
 
-    for(size_t i=0; i<dataset_reference.size(); i++){
+    for(size_t i=0; i<dataset_reference.size(); i++){   //υπολογισμός απόστασης από όλα τα σημεία του dataset
         double dist = euclidean_distance(query, dataset_reference[i]);
         dists.emplace_back(dist, i);
     }
 
-    sort(dists.begin(), dists.end());
+    sort(dists.begin(), dists.end());   //ταξινόμηση κατά αύξουσα απόσταση
 
     vector<pair<int, double>> res;
 
-    for(int i=0; i<min(N, static_cast<int>(dists.size())); i++){
+    for(int i=0; i<min(N, static_cast<int>(dists.size())); i++) //επιστροφή των N πλησιέστερων    
         res.emplace_back(dists[i].second, dists[i].first);
-    }
 
     return res;
 }
 
-/*vector<int> IVFPQ :: approximate_range_search(const vector<double>& query){
-    if(index == nullptr){
-        throw runtime_error("IVFPQ Index not built yet!");
-    }
-
-    auto ivfpq_res = index->range_search(query, nprobe, R);
-    vector<int> res;
-
-    for(const auto& i : ivfpq_res){
-        res.push_back(i.second);
-    }
-
-    return res;
-}*/
-
+//συνάρτηση που κάνει προσεγγιστική range search
 vector<int> IVFPQ :: approximate_range_search(const vector<double>& query){
-    if(index == nullptr){
+    if(index == nullptr)
         throw runtime_error("IVFPQ Index not built yet!");
-    }
 
-    // Χρησιμοποίησε μεγαλύτερο R για την προσεγγιστική αναζήτηση
-    double approx_R = R * 1.5;  // Πειραματική αύξηση 50%
+    //χρησιμοποιούμε μεγαλύτερο R για την προσεγγιστική αναζήτηση
+    //αυτό βοηθάει να πιάσουμε περισσότερα σημεία λόγω προσεγγιστικών υπολογισμών
+    double approx_R = R * 1.5;  //πειραματική αύξηση 50%
     
     auto ivfpq_res = index->range_search(query, nprobe, approx_R);
     vector<int> res;
 
-    for(const auto& candidate : ivfpq_res){
+    for(const auto& candidate : ivfpq_res)
         res.push_back(candidate.second);
-    }
 
     return res;
 }
 
+//συνάρτηση που κάνει ακριβή range search
 vector<int> IVFPQ :: exact_range_search(const vector<double>& query, const vector<vector<double>>& dataset){
     vector<int> res;
 
-    for(size_t i=0; i<dataset.size(); i++){
+    for(size_t i=0; i<dataset.size(); i++){     //έλεγχος όλων των σημείων στο dataset
         double dist = euclidean_distance(query, dataset[i]);
-        if(dist<=R){
+        if(dist<=R)         //προσθήκη αν είναι εντός ακτίνας
             res.push_back(i);
-        } 
     }
 
     return res;
 }
 
+//συνάρτηση που κάνει επεξεργασία όλων των queries και αποθήκευση αποτελεσμάτων
 void IVFPQ :: Queries(const vector<vector<double>>& query, const vector<vector<double>>& dataset){
-    cout << "Executing IVFPQ queries..." << endl;
+    // cout << "Executing IVFPQ queries..." << endl;
 
-    ofstream out(output_file);
-    if(!out.is_open()){
+    ofstream out(output_file);  //άνοιγμα output_file
+    if(!out.is_open())
         throw runtime_error("Cannot open output file: " + output_file);
-    }
 
     out << "IVFPQ" << endl;
 
+    //μεταβλητές για συσσώρευση στατιστικών
     double total_af = 0.0;
     double total_recall = 0.0;
     double total_approx_time = 0.0;
@@ -175,7 +165,7 @@ void IVFPQ :: Queries(const vector<vector<double>>& query, const vector<vector<d
 
     auto start_all = chrono::high_resolution_clock::now();
 
-    for(size_t i=0; i<query.size(); i++){
+    for(size_t i=0; i<query.size(); i++){   //επεξεργασία κάθε query
         const auto& q = query[i];
         
         // Approxximate search
@@ -201,25 +191,21 @@ void IVFPQ :: Queries(const vector<vector<double>>& query, const vector<vector<d
                 out << "Nearest neighbor-" << (j+1) << ": " << ann_res[j].first << endl;
                 out << "distanceApproximate: " << ann_res[j].second << endl;
                 
-                if(static_cast<size_t>(j)<enn_res.size()){
+                if(static_cast<size_t>(j)<enn_res.size())
                     out << "distanceTrue: " << enn_res[j].second << endl;
-                }
-                else{
+                else
                     out << "distanceTrue: " << -1 << endl;
-                }
             }
         }
 
         //Range search
         if(range){
             out << "R-near neighbors:" << endl;
-            for(int point_id : approx_range_res){
+            for(int point_id : approx_range_res)
                 out << point_id << endl;
-            }
 
-            if(approx_range_res.empty()){
-                out << "None" << endl;
-            }
+            if(approx_range_res.empty())
+                out << "None" << endl;  //κανένα σημείο εντός της ακτίνας
         }
 
         //Υπολογισμός μετρικών
@@ -227,9 +213,8 @@ void IVFPQ :: Queries(const vector<vector<double>>& query, const vector<vector<d
             double approx_dist = ann_res[0].second;
             double exact_dist = enn_res[0].second;
 
-            if(exact_dist>0){
+            if(exact_dist>0)
                 total_af += (approx_dist/exact_dist);
-            }
 
             int correct_matches = 0;
             for(const auto& ann : ann_res){
@@ -248,33 +233,6 @@ void IVFPQ :: Queries(const vector<vector<double>>& query, const vector<vector<d
             success_queries++;
         }
         out << "-------------------" << endl;
-
-        // out << endl;
-    
-        // //Εγγραφή τελικών μετρικών
-        // if(success_queries>0){
-        //     double avg_af = total_af/success_queries;
-        //     double avg_recall = total_recall/success_queries;
-        //     double qps = success_queries/total_approx_time;
-        //     double taa = total_approx_time/success_queries;
-        //     double tra = total_exact_time/success_queries;
-
-        //     out << "Average AF: " << avg_af << endl;
-        //     out << "Recall@N: " << avg_recall << endl;
-        //     out << "QPS: " << qps << endl;
-        //     out << "tApproximateAverage: " << taa << endl;
-        //     out << "tTrueAverage: " << tra << endl;
-        // }
-        // else{
-        //     out << "Average AF: 0" << endl;
-        //     out << "Recall@N: 0" << endl;
-        //     out << "QPS: 0" << endl;
-        //     out << "tApproximateAverage: 0" << endl;
-        //     out << "tTrueAverage: 0" << endl;
-        // }
-
-        // out << endl;
-    
     }
     
     auto end_all = chrono::high_resolution_clock::now();
@@ -295,24 +253,18 @@ void IVFPQ :: Queries(const vector<vector<double>>& query, const vector<vector<d
         out << "Average Approximate Time: " << taa << endl;
         out << "Average Exact Time: " << tra << endl;
     }
-    // else{
-    //     out << "AF: 0" << endl;
-    //     out << "Recall@N: 0" << endl;
-    //     out << "QPS: 0" << endl;
-    //     out << "tApproximateAverage: 0" << endl;
-    //     out << "tTrueAverage: 0" << endl;
-    // }
-
+    
     out.close();
-    cout << "Results written to: " << output_file << endl;
-    cout << "Successful queries processed: " << success_queries << "/" << query.size() << endl;
+    // cout << "Results written to: " << output_file << endl;
+    // cout << "Successful queries processed: " << success_queries << "/" << query.size() << endl;
 }
     
+//συνάρτηση που υλοποιεί την κύρια λειτουργία του ivfpq αλγορίθμου
 void IVFPQ :: ivfpq_func(const vector<vector<double>>& dataset, const vector<vector<double>>& query){
-    cout << "=== Starting IVFPQ Algorithm ===" << endl;
+    // cout << "=== Starting IVFPQ Algorithm ===" << endl;
 
-    build_index(dataset);
-    Queries(query, dataset);
+    build_index(dataset);       //κατασκευή index 
+    Queries(query, dataset);    //εκτέλεση queries
 
-    cout << "=== IVFPQ Algorithm Completed ===";
+    // cout << "=== IVFPQ Algorithm Completed ===";
 }
