@@ -6,8 +6,9 @@
 2. Τόντου Αλτάνη-Δάφνη - 1115202200288
 
 ## Περιγρφή 
-Το project έχει υλοποιηθεί σε C++, η πειαματική ανάλυση σε python και υπάρχει ένα bash αρχείο το οποίο 
-χρησιμοποιείται για την πειραματική ανάλυση. 
+Το project έχει υλοποιηθεί σε C++, η πειαματική ανάλυση σε python και υπάρχουν δύο bash αρχεία τα οποία 
+χρησιμοποιούνται για την πειραματική ανάλυση. 
+
 
 Στην πειραματική ανάλυση παράγονται τα αρχεία:
 1. algorithm_comparison_table.csv
@@ -42,6 +43,7 @@
 6. **k_means.cpp**     : αλγόριθμος k-means clustering
 7. **mnist_data.cpp**  : διαχείριση MNIST dataset
 8. **sift_data.cpp**   : διαχείριση SIFT dataset
+9. **main.cpp**
 
 ### Αρχεία επικεφαλίδας -> **include/**
 1. **hypercube.hpp**
@@ -69,7 +71,7 @@
 ***make run_lsh***, ***make run_hypercube***, ***make run_ivfflat*** και ***make run_ivfpq***.
 
 Αν θέλουμε να τρέξουμε τα αρχεία για την πειραματική ανάλυση, κάνουμε πρώτα compile και run το bash αρχείο με 
-τις εντολές ***make bash*** και ***make run_bash***, και στη συνέχεια τρέχουμε διαδοχικά τις εντολές 
+τις εντολές ***make sift_bash*** και ***make run_sift_bash*** για τα sift ή ***make mnist_bash*** και ***make run_mnist_bash*** για τα mnist, και στη συνέχεια τρέχουμε διαδοχικά τις εντολές 
 ***make run_parse_results*** και ***make run_create_plots***.
 
 Για να διαγράψουμε τα παραγόμενα αρχεία χρησιμοποιούμε την εντολή ***make clean***. 
