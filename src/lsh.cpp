@@ -1,4 +1,5 @@
 /* LSH */
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -10,8 +11,10 @@
 #include <cstdlib>
 
 #include "../include/lsh.hpp"
+
 using namespace std;
 
+//constructor
 lsh :: lsh(int seed1, string input_file1, string query_file1, string output_file1, int k1, int L1, double w1, int N1, double R1, string type1, bool range1){
     seed = seed1;
     input_file = input_file1;
@@ -29,6 +32,7 @@ lsh :: lsh(int seed1, string input_file1, string query_file1, string output_file
     cout << "LSH Constructed!" << endl;
 }
 
+//destructor
 lsh :: ~lsh(){
     hashTables.clear();
     randomvectors.clear();
@@ -37,19 +41,20 @@ lsh :: ~lsh(){
     cout << "LSH Deconstructed!" << endl;
 }
 
-//Αρχικοποίηση τυχαίων διανυσμάτων (v) κ μετατοπίσεων (t)
+//συνάρτηση που κάνει αρχικοποίηση τυχαίων διανυσμάτων (v) κ μετατοπίσεων (t)
 void lsh:: Initialize(size_t dataset_n){
-    cout << "Initialize random components" << endl;
+    // cout << "Initialize random components" << endl;
 
+    //ρύθμιση γεννήτριων τυχαίων αριθμών 
     default_random_engine generator(seed);
-    normal_distribution<double> normal_dist(0.0,1.0);
-    uniform_real_distribution<double> uniform_dist(0.0, w);
-    uniform_int_distribution<uint64_t> uniform_r(1, M-1);
+    normal_distribution<double> normal_dist(0.0,1.0);       //κανονική κατανομή για διανύσματα
+    uniform_real_distribution<double> uniform_dist(0.0, w); //ομοιόμορφη για μετατοπίσεις
+    uniform_int_distribution<uint64_t> uniform_r(1, M-1);   //ομοιόμορφη για συντελεστές r
     
-    //Setup τυχαίες μεταβλητές 
-    randomvectors.resize(L);
-    randomshifts.resize(L);
-    random_r.resize(L);
+    //αρχικοποίηση δομών για τυχαίες μεταβλητές
+    randomvectors.resize(L);    //L πίνακες × k διανύσματα
+    randomshifts.resize(L);     //L πίνακες × k μετατοπίσεις
+    random_r.resize(L);         //L πίνακες × k συντελεστές r
 
     for(int i = 0; i < L; i++){
         randomvectors[i].resize(k);
@@ -58,80 +63,85 @@ void lsh:: Initialize(size_t dataset_n){
 
         for(int j = 0; j < k; j++){
             randomvectors[i][j].resize(dimension);
-            for(int dim = 0; dim < dimension; dim++){
+            for(int dim = 0; dim < dimension; dim++)    //δημιουργία τυχαίου διανύσματος από κανονική κατανομή
                 randomvectors[i][j][dim] = normal_dist(generator);
-            }
-            randomshifts[i][j] = uniform_dist(generator);
-            random_r[i][j] = uniform_r(generator);
+            
+            randomshifts[i][j] = uniform_dist(generator);   //τυχαία μετατόπιση
+            random_r[i][j] = uniform_r(generator);          //τυχαίος συντελεστής r
         }
     }
-    if(dataset_n > 0){
-        tableSize = max<size_t>(1, dataset_n / 4);
-    }
-    cout << "Random components initialized successfully" << endl;
+
+    if(dataset_n > 0)   //υπολογισμός μεγέθους πίνακα κατακερματισμού
+        tableSize = max<size_t>(1, dataset_n / 4);  //25% του μεγέθους dataset
+    
+    // cout << "Random components initialized successfully" << endl;
 }
 
-
-double lsh::euclidean_distance(const vector<double>& v1, const vector<double>& v2) {
+//συνάρτηση που υπολογίζει την ευκλείδεια απόσταση μεταξύ 2 διανυσμάτων 
+double lsh::euclidean_distance(const vector<double>& v1, const vector<double>& v2){
     double sum = 0.0;
+
     for (size_t i = 0; i < v1.size(); i++) {
         double diff = v1[i] - v2[i];
         sum += diff * diff;
     }
+    
     return sqrt(sum);
 }
 
+//συνάρτηση που κάνει προσεγγιστική αναζήτηση πλησιέστερων γειτόνων
 vector<pair<int, double>> lsh::ANN(const vector<double>& query,const vector<vector<double>>& dataset){
-    unordered_set<int> candidate_set;
+    unordered_set<int> candidate_set;   //σύνολο για αποφυγή διπλότυπων 
 
-    for(int i = 0; i < L; i++){
-        int query_hash = CreateHFun(query,i);
+    for(int i = 0; i < L; i++){                 //συλλογή υποψήφιων από όλους τους πίνακες κατακερματισμού
+        int query_hash = CreateHFun(query,i);   //υπολογισμός hash για το query
 
-        if(hashTables[i].find(query_hash) != hashTables[i].end()){
-
+        if(hashTables[i].find(query_hash) != hashTables[i].end()){  //έλεγχος αν το bucket υπάρχει στον τρέχοντα πίνακα
             auto it = hashTables[i].find(query_hash);
-            if(it != hashTables[i].end()){
-                candidate_set.insert(it->second.begin(), it->second.end());
-            }
+            if(it != hashTables[i].end())
+                candidate_set.insert(it->second.begin(), it->second.end()); //προσθήκη όλων των σημείων από το bucket στο candidate set
         }
     }
 
-    vector<pair<int,double>> candidate_distances;
+    vector<pair<int,double>> candidate_distances;   //υπολογισμός αποστάσεων για όλους τους υποψήφιους
     for(int j : candidate_set){
         double dist = euclidean_distance(query,dataset[j]);
         candidate_distances.push_back({j,dist});
     }
 
+    //ταξινόμηση κατά αύξουσα απόσταση
     sort(candidate_distances.begin(),candidate_distances.end(),[](const auto& a, const auto& b) { return a.second < b.second; });
 
-    if(/*candidate_distances.size()>N*/  candidate_distances.size() > static_cast<size_t>(N)){
+    if(candidate_distances.size() > static_cast<size_t>(N)) //περικοπή στους N πλησιέστερους
         candidate_distances.resize(N);
-    }
 
     return candidate_distances;
 }
 
+//συνάρτηση που κάνει ακριβ΄΄η αναζήτηση πλησιέστερων γειτόνων 
 vector<pair<int, double>> lsh::ENN(const vector<double>& query,const vector<vector<double>>& dataset){
     vector<pair<int,double>> all_distances;
     
-    for(size_t i = 0; i < dataset.size(); i++){
+    for(size_t i = 0; i < dataset.size(); i++){     //υπολογισμός απόστασης από όλα τα σημεία του dataset
         double dist = euclidean_distance(query,dataset[i]);
         all_distances.push_back({i,dist});
     }
-        
+     
+    //ταξινόμηση κατά αύξουσα απόσταση
     sort(all_distances.begin(),all_distances.end(),[](const auto& a, const auto& b) { return a.second < b.second; });
 
-    if(all_distances.size() > static_cast<size_t>(N)){
+    if(all_distances.size() > static_cast<size_t>(N))   //περικοπή στους N πλησιέστερους
         all_distances.resize(N);
-    }
+
     return all_distances;
 }
 
+//συνάρτηση που κάνει προσεγγιστική range search 
 vector<int> lsh:: ARange_Search(const vector<double>& query, const vector<vector<double>>& dataset){
     unordered_set<int> candidate_set;
     vector<int> range_neighbors;
 
-    // Συλλογή candidates από όλα τα hash tables
+    //συλλογή candidates από όλα τα hash tables
     for(int i = 0; i < L; i++){
         int query_hash = CreateHFun(query,i);
         if(hashTables[i].find(query_hash) != hashTables[i].end()){
@@ -140,33 +150,34 @@ vector<int> lsh:: ARange_Search(const vector<double>& query, const vector<vector
         }
     }
 
-    // Έλεγχος μόνο των candidates
+    //έλεγχος μόνο των candidates εντός της ακτίνας R
     for(int j : candidate_set){
         double dist = euclidean_distance(query,dataset[j]);
-        if(dist <= R){
+        if(dist <= R)
             range_neighbors.push_back(j);
-        }
     }
 
     return range_neighbors;
 }
 
+//συνάρτηση που κάνει ακριβ΄΄η range search 
 vector<int> lsh:: ERange_Search(const vector<double>& query, const vector<vector<double>>& dataset){
     vector<int> range_neighbors;
 
-    for(size_t j = 0; j < dataset.size(); j++){
+    for(size_t j = 0; j < dataset.size(); j++){     //έλεγχος όλων των σημείων στο dataset
         double dist = euclidean_distance(query,dataset[j]);
-        if(dist <= R){
+        if(dist <= R)
             range_neighbors.push_back(j);
-        }
     }
 
     return range_neighbors;
 }
-void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<double>>& dataset){
-    cout << "Calculate Queries" << endl;
 
-    ofstream out(output_file);
+//συνάρτηση που κάνει επεξεργασία όλων των queries και αποθήκευση αποτελεσμάτων
+void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<double>>& dataset){
+    // cout << "Calculate Queries" << endl;
+
+    ofstream out(output_file);  //άνοιγμα output_file
     if(!out.is_open()){
         cerr << "Error: Cannot open output file " << output_file << endl;
         return;
@@ -174,22 +185,23 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
     
     out<<"LSH\n";
 
+    //μεταβλητές για συσσώρευση στατιστικών
     double total_Average_factor = 0.0,total_recall=0.0;
     double total_atime = 0.0,total_etime = 0.0;
     int valid_q = 0;
 
     auto start_all = chrono::high_resolution_clock::now();
     
-    for(size_t i = 0; i < queries.size(); i++){
+    for(size_t i = 0; i < queries.size(); i++){     //επεξεργασία κάθε query
         const auto& q = queries[i];
 
-        //Προσεγγιστική αναζήτηση
+        //προσεγγιστική αναζήτηση
         auto start = chrono::high_resolution_clock::now();
         auto aNN = ANN(q,dataset);    // vector<pair<int,double>>
         auto end = chrono::high_resolution_clock::now();
         auto atime = chrono::duration<double>(end-start).count();
         
-        //Ακριβής αναζήτηση
+        //ακριβής αναζήτηση
         start = chrono::high_resolution_clock::now();
         auto eNN = ENN(q,dataset);    //vector<pair<int,double>>
         end = chrono::high_resolution_clock::now();
@@ -202,15 +214,14 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
         out << "Query: " << i <<endl;
         if(!aNN.empty() && !eNN.empty()) {
             
-            for(size_t neighbor = 0; neighbor < aNN.size(); neighbor++){
+            for(size_t neighbor = 0; neighbor < aNN.size(); neighbor++){    //εκτύπωση αποτελεσμάτων για κάθε γείτονα
                 int data_idx =  aNN[neighbor].first;
                 
                 out << "Nearest neighbor-" << neighbor + 1 << ": " << data_idx << endl ;
                 out << "distanceApproximate: " << aNN[neighbor].second << endl;
         
-                if(neighbor < eNN.size()){
+                if(neighbor < eNN.size())
                     out<<"distanceTrue: " << eNN[neighbor].second << endl;
-                }
             }
             
             double Average_factor = aNN[0].second / eNN[0].second;
@@ -231,20 +242,18 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
             
             vector<int> aRN;
             if(range){
-                // Approximate range search (για output)
+                //approximate range search (για output)
                 aRN = ARange_Search(q, dataset);
              
                 out << "R-near neighbors:";
-                if(aRN.empty()){
+                if(aRN.empty())
                     out << "\n";
-                }else{
+                else{
                     out<< "\n";
-                    for(int id: aRN){
+                    for(int id: aRN)
                         out << id << "\n";
-                    }
                 }
             }
-
 
             out<< "Average AF: " << Average_factor << endl;
             out<< "Recall@N: " << recall <<endl;           
@@ -254,7 +263,7 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
         }     
     }
     
-    // Υπολογισμός QPS για όλο το σύνολο
+    //υπολογισμός QPS για όλο το σύνολο
     auto end_all = chrono::high_resolution_clock::now();
     double total_time_all = chrono::duration<double>(end_all-start_all).count();
     double qps = (queries.size() > 0) ? queries.size() / total_time_all : 0.0;
@@ -267,93 +276,98 @@ void lsh::Queries(const vector<vector<double>>& queries,const vector<vector<doub
     out << "Average Exact Time: " << total_etime / valid_q << endl;
     
     out.close();
-    cout<<"Complete Queries"<<endl;
-   
+    // cout<<"Complete Queries"<<endl;
 }
 
+//συνάρτηση που δημιουργεί hash value για ένα point σε συγκεκριμένο πίνακα
 int lsh:: CreateHFun(const vector<double>& point, int tableIndex){
-    vector<int64_t> hash_values(k);
+    vector<int64_t> hash_values(k);     //k μερικές hash τιμές
      
     for (int i = 0; i < k; i++){
         double dot_product = 0.0;
                 
-        for(int dim = 0 ; dim < dimension ; dim++){
+        for(int dim = 0 ; dim < dimension ; dim++)      //υπολογισμός εσωτερικού γινομένου (v · p)
             dot_product += randomvectors[tableIndex][i][dim]*point[dim];
-        }
         
-        if(dot_product > INT_MAX || dot_product < INT_MIN){
+        if(dot_product > INT_MAX || dot_product < INT_MIN){     //έλεγχος υπερχείλισης
             cout<<"Overflow"<<endl;
             exit(EXIT_FAILURE);
         }
 
-        double numerator = dot_product + randomshifts[tableIndex][i];
+        //εφαρμογή LSH function: h(p) = floor((v·p + t)/w)
+        double numerator = dot_product + randomshifts[tableIndex][i];   
         int64_t h_i = static_cast<int64_t>(floor(numerator / w) );
         hash_values[i] = h_i;
     } 
 
+    //συνδυασμός των k hash τιμών σε μια τελική τιμή
     uint64_t ID = 0;
     for (int i = 0; i < k; ++i) {
         int64_t h = hash_values[i];
-        uint64_t hu = static_cast<uint64_t>((h % static_cast<int64_t>(M) + static_cast<int64_t>(M)) % static_cast<int64_t>(M));
+        uint64_t hu = static_cast<uint64_t>((h % static_cast<int64_t>(M) + static_cast<int64_t>(M)) % static_cast<int64_t>(M)); //μετατροπή σε μη-αρνητικό modulo M
         ID = ( ID +  (random_r[tableIndex][i] * hu) % M ) % M;
     }
 
-    // Τελική συνάρτηση g(p) = ID mod TableSize
-    if (tableSize == 0) {
-        // αν δεν έχεις ορίσει tableSize
+    //τελική συνάρτηση g(p) = ID mod TableSize
+    if (tableSize == 0)     //αν δεν έχεις ορίσει tableSize, χρησιμοποιε΄ί large prime
         return static_cast<int>(ID % 2147483647ULL);
-    }
 
     return static_cast<int>( ID % tableSize );      
 }
 
-//Δημιουργία hash tables
+//συνάρτηση που δημιουργεί hash tables
 void lsh:: CreateHashTables(const vector<vector<double>>& dataset){
-
-    if(dataset.empty()) {
+    if(dataset.empty()){
         cerr << "Error: Empty dataset" << endl;
         return;
     }
 
-    cout<<"Create L: "<< L << " hash tables" <<endl;
-    hashTables.resize(L);
+    // cout<<"Create L: "<< L << " hash tables" <<endl;
+    hashTables.resize(L);   //αρχικοποίηση L πινάκων
     
     for(int i = 0; i < L; i++){
-        for(size_t j = 0; j < dataset.size(); j++){
-            if(/*dataset[j].size() != dimension*/ dataset[j].size() != static_cast<size_t>(dimension)) {
+        for(size_t j = 0; j < dataset.size(); j++){     //ελεγχος διάστασης διανύσματος
+            if(dataset[j].size() != static_cast<size_t>(dimension)){
                 cerr << "Error: Vector dimension mismatch" << endl;
                 continue;
             }
-            int hash_value = CreateHFun(dataset[j],i);
-            hashTables[i][hash_value].push_back(j);
+
+            int hash_value = CreateHFun(dataset[j],i);  //υπολογισμός hash
+            hashTables[i][hash_value].push_back(j);     //προσθήκη στο bucket
         }       
     }
-    cout << "Hash tables created successfully" << endl;
+    // cout << "Hash tables created successfully" << endl;
 }
 
+//συνάρτηση που υλοποιέι την κύρια λειτουργία του LSH αλγορίθμου
 void lsh::lsh_func(const vector<vector<double>>& dataset,const vector<vector<double>>& queries){
-    if (dataset.empty()) {
+    //έλεγχοι εγκυρότητας δεδομένων
+    if(dataset.empty()){
         cerr << "Error: Dataset is empty" << endl;
         return;
     }
-    if (queries.empty()) {
+
+    if(queries.empty()){
         cerr << "Error: Query set is empty" << endl;
         return;
     }
-    if (/*dataset[0].size() != dimension*/ dataset[0].size() != static_cast<size_t>(dimension)) {
+    
+    if(dataset[0].size() != static_cast<size_t>(dimension)) {
         cerr << "Error: Dataset dimension mismatch" << endl;
         return;
     }
-    cout<<"LSH Algorithm" <<endl;
 
-    cout << "Dataset size: " << dataset.size() << " vectors" << endl;
-    cout << "Vector dimension: " << dataset[0].size() << endl;
+    // cout<<"LSH Algorithm" <<endl;
 
-    Initialize(dataset.size());
-    CreateHashTables(dataset);
-    Queries(queries,dataset);
+    // cout << "Dataset size: " << dataset.size() << " vectors" << endl;
+    // cout << "Vector dimension: " << dataset[0].size() << endl;
+
+    Initialize(dataset.size());     //αρχικοποίηση τυχαίων components
+    CreateHashTables(dataset);      //δημιουργία πινάκων κατακερματισμού
+    Queries(queries,dataset);       //εκτέλεση queries
 }
 
+//συνάρτηση που εμφανίζει τις παραμέτρους
 void lsh:: print_params() {
     std::cout << "input_file: " << input_file << "\n"
               << "query_file: " << query_file << "\n"
