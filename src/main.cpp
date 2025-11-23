@@ -20,6 +20,8 @@ int main(int argc, char* argv[]){
     bool use_hypercube = false; 
     bool use_ivfflat = false;
     bool use_ivfpq = false;
+    bool use_ivfflat_knn = false;
+
 
     for(int i=0; i<argc; i++){
         string arg = argv[i];
@@ -39,9 +41,17 @@ int main(int argc, char* argv[]){
             use_ivfpq = true;
             break;
         } 
+        else if(arg == "-ivfflat_knn"){
+            use_ivfflat_knn = true;
+            break;
+        }
     }
 
     string type, input_file, query_file, output_file;
+    if(use_ivfflat_knn){
+        // Only dataset needed, skip queries
+        query_file = "";
+    }
     for(int i=0; i<argc; i++){
         string arg = argv[i];
         if (arg == "-d") input_file = argv[++i];
@@ -55,41 +65,56 @@ int main(int argc, char* argv[]){
     //διαβαζει από τα αρχεία ανάλογα με το type και αποθηκεύει στα vector
     vector<vector<double>> dataset;
     vector<vector<double>> queries;
-    
+      if(use_ivfflat_knn){
+    // load only dataset (queries unused)
     if(type == "mnist"){
-        cout << "MNIST: " << endl;
-        vector<vector<float>> float_data = return_mnist_data(input_file);
-        vector<vector<float>> float_queries = return_mnist_queries(query_file);
-        
-        //μετατροπη data float->double ώστε να ειναι συμβατά με όλους τους αλγόριθμους
+        auto float_data = return_mnist_data(input_file);
         dataset.resize(float_data.size());
-        for(size_t i = 0; i < float_data.size(); i++)
+        for(size_t i=0;i<float_data.size();i++)
             dataset[i].assign(float_data[i].begin(), float_data[i].end());
-        
-        queries.resize(float_queries.size());
-        for(size_t i = 0; i < float_queries.size(); i++)
-            queries[i].assign(float_queries[i].begin(), float_queries[i].end());
-        
     }
-    else if(type == "sift"){
-        cout << "SIFT: " << endl;
-        vector<vector<float>> float_data = return_sift_data(input_file);
-        vector<vector<float>> float_queries = return_sift_queries(query_file);
-        
+    else {
+        auto float_data = return_sift_data(input_file);
         dataset.resize(float_data.size());
-        for(size_t i = 0; i < float_data.size(); i++) 
+        for(size_t i=0;i<float_data.size();i++)
             dataset[i].assign(float_data[i].begin(), float_data[i].end());
-        
-        queries.resize(float_queries.size());
-        for(size_t i = 0; i < float_queries.size(); i++) 
-            queries[i].assign(float_queries[i].begin(), float_queries[i].end());
-        
     }
-    else{
-        cerr<<"Unknown type"<<endl;
-        return 1;
     }
-
+    else {
+        if(type == "mnist"){
+            cout << "MNIST: " << endl;
+            vector<vector<float>> float_data = return_mnist_data(input_file);
+            vector<vector<float>> float_queries = return_mnist_queries(query_file);
+            
+            //μετατροπη data float->double ώστε να ειναι συμβατά με όλους τους αλγόριθμους
+            dataset.resize(float_data.size());
+            for(size_t i = 0; i < float_data.size(); i++)
+                dataset[i].assign(float_data[i].begin(), float_data[i].end());
+            
+            queries.resize(float_queries.size());
+            for(size_t i = 0; i < float_queries.size(); i++)
+                queries[i].assign(float_queries[i].begin(), float_queries[i].end());
+            
+        }
+        else if(type == "sift"){
+            cout << "SIFT: " << endl;
+            vector<vector<float>> float_data = return_sift_data(input_file);
+            vector<vector<float>> float_queries = return_sift_queries(query_file);
+            
+            dataset.resize(float_data.size());
+            for(size_t i = 0; i < float_data.size(); i++) 
+                dataset[i].assign(float_data[i].begin(), float_data[i].end());
+            
+            queries.resize(float_queries.size());
+            for(size_t i = 0; i < float_queries.size(); i++) 
+                queries[i].assign(float_queries[i].begin(), float_queries[i].end());
+            
+        }
+        else{
+            cerr<<"Unknown type"<<endl;
+            return 1;
+        }
+    }
     //έλεγχος οτι τα data φορτωθηκαν σωστα
     if(!dataset.empty())
         cout << "Data size: " << dataset.size() << " vectors x " << dataset[0].size() << " dimensions" << endl;
@@ -187,6 +212,44 @@ int main(int argc, char* argv[]){
         IVFFlat ivfflat(seed, input_file, query_file, output_file, kclusters, nprobe, N, R, type, range);
         ivfflat.print_params();
         ivfflat.ivfflat_func(dataset, queries);
+    }
+    else if(use_ivfflat_knn){
+        cout << "\n>>> Running IVFFlat KNN Graph Mode...\n";
+
+        int kclusters = 14, nprobe = 2, knn_k = 10, seed = 1;
+        string output_knn;
+
+        for(int i = 1; i < argc; i++){
+            string arg = argv[i];
+            if(arg == "--knn") knn_k = stoi(argv[++i]);          // k for graph
+            else if(arg == "-kclusters") kclusters = stoi(argv[++i]);
+            else if(arg == "-nprobe") nprobe = stoi(argv[++i]);
+            else if(arg == "-o") output_knn = argv[++i];         // output file for graph
+        }
+
+        if(output_knn == ""){
+            cerr << "Error: you must give -o <file> for kNN graph\n";
+            return 1;
+        }
+
+        // Build IVFFlat index (no queries)
+        IVFFlat ivff(seed, input_file, "", "", kclusters, nprobe, knn_k, 0.0, type, false);
+        ivff.Initialize(dataset.size());
+        ivff.CreateClusters(dataset);
+
+        // Compute graph
+        auto G = ivff.ComputeKNNGraph(knn_k);
+
+        // Save graph
+        ofstream out(output_knn);
+        for(size_t i=0;i<G.size();i++){
+            out << i << ": ";
+            for(int nb : G[i]) out << nb << " ";
+            out << "\n";
+        }
+        out.close();
+
+        cout << "k-NN graph written to: " << output_knn << endl;
     }
     else if(use_ivfpq){
         cout << "\n>>> Running IVFPQ Algorithm... \n";

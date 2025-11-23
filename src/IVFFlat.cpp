@@ -8,6 +8,7 @@
 #include <climits>
 #include <chrono>
 #include <queue> 
+#include <set>
 
 #include "../include/IVFFlat.hpp"
 
@@ -493,4 +494,40 @@ void IVFFlat :: print_params() {
               << "kclusters : " << kclusters  << ", N: " << N << ", R: " << R << ", nprobe: " << nprobe << "\n"
               << "type: " << type << "\n"
               << "range: " << boolalpha << range << "\n";
+}
+
+vector<vector<int>> IVFFlat::ComputeKNNGraph(int k) {
+    vector<vector<int>> graph(dataset_reference.size());
+    
+    // Προσωρινή αποθήκευση του αρχικού N
+    int original_N = this->N;
+    this->N = k;  // Ορισμός για k γείτονες
+
+    for(size_t i = 0; i < dataset_reference.size(); ++i) {
+        auto neighbors = ANN(dataset_reference, dataset_reference[i]);
+        
+        for(const auto& nb : neighbors) {
+            if(nb.first != i) {  // Αποφυγή self-loops
+                graph[i].push_back(nb.first);
+            }
+        }
+        
+        // Εάν δεν βρέθηκαν αρκετοί γείτονες, συμπλήρωση
+        if(graph[i].size() < static_cast<size_t>(k)) {
+            std::set<int> unique_nbs(graph[i].begin(), graph[i].end());
+            unique_nbs.insert(i);  // Αποφυγή διπλοεγγραφής του ίδιου node
+            
+            for(size_t j = 0; j < dataset_reference.size() && 
+                graph[i].size() < static_cast<size_t>(k); ++j) {
+                if(unique_nbs.find(j) == unique_nbs.end()) {
+                    graph[i].push_back(j);
+                    unique_nbs.insert(j);
+                }
+            }
+        }
+    }
+    
+    // Επαναφορά του αρχικού N
+    this->N = original_N;
+    return graph;
 }
