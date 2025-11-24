@@ -243,8 +243,10 @@ int main(int argc, char* argv[]){
         // Save graph
         ofstream out(output_knn);
         for(size_t i=0;i<G.size();i++){
+            
             out << i << ": ";
-            for(int nb : G[i]) out << nb << " ";
+
+            for(int nb : G[i]) out << " " << nb;
             out << "\n";
         }
         out.close();
