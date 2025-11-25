@@ -37,7 +37,7 @@ vector<vector<float>> read_sift_file(const string& filename){
 
         data.push_back(move(vec));
         //για testing: όριο
-        if (data.size() >= 1000) break;
+        // if (data.size() >= 1000) break;
     }
 
     // cout << "Loaded " << data.size() << " SIFT vectors" << endl;
