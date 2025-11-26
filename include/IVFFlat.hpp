@@ -41,7 +41,7 @@ class IVFFlat{
         vector<int> ARange_Search(const vector<vector<double>>& dataset, const vector<double>& query);
         vector<int> ERange_Search(const vector<vector<double>>& dataset, const vector<double>& query);
         double calculate_silhouette();
-        vector<vector<int>> ComputeKNNGraph(int k) ;
+        vector<vector<int>> ComputeKNNGraphApprox(int k);
 };
 
 #endif

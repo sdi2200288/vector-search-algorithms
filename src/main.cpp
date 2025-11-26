@@ -14,6 +14,15 @@
 
 using namespace std;
 
+float L2sqr(const float* a, const float* b, int dim) {
+    float sum = 0.0f;
+    for (int i = 0; i < dim; i++) {
+        float diff = a[i] - b[i];
+        sum += diff * diff;
+    }
+    return sum;
+}
+
 int main(int argc, char* argv[]){
     // Flags για το ποιός αλγόριθμος θα τρέξει (μονο ενας μπορει να ειναι true καθε φορα)
     bool use_lsh = false;
@@ -21,6 +30,7 @@ int main(int argc, char* argv[]){
     bool use_ivfflat = false;
     bool use_ivfpq = false;
     bool use_ivfflat_knn = false;
+    bool use_bruteforce_knn = false;
 
 
     for(int i=0; i<argc; i++){
@@ -43,6 +53,10 @@ int main(int argc, char* argv[]){
         } 
         else if(arg == "-ivfflat_knn"){
             use_ivfflat_knn = true;
+            break;
+        }
+        else if(arg == "-bruteforce_knn"){
+            use_bruteforce_knn = true;
             break;
         }
     }
@@ -254,6 +268,66 @@ int main(int argc, char* argv[]){
         out.close();
 
         cout << "k-NN graph written to: " << output_knn << endl;
+    }
+    else if (use_bruteforce_knn) {
+        std::string dataFile, type = "", outputFile;
+        int k = 10;
+
+        for (int i = 2; i < argc; i++) {
+            if (strcmp(argv[i], "-d") == 0) dataFile = argv[++i];
+            else if (strcmp(argv[i], "--knn") == 0) k = atoi(argv[++i]);
+            else if (strcmp(argv[i], "-type") == 0) type = argv[++i];
+            else if (strcmp(argv[i], "-o") == 0) outputFile = argv[++i];
+        }
+
+        int N = 0, dim = 0;
+        std::vector<float*> DB;
+
+        if (type == "sift"){
+            auto tmp = return_sift_data(dataFile);
+            N = tmp.size();
+            dim = tmp[0].size();
+            DB.resize(N);
+            for (int i = 0; i < N; i++)
+                DB[i] = tmp[i].data();
+        }
+        // else if (type == "mnist")
+        //     DB = read_mnist_csv(dataFile, N, dim);
+        else {
+            std::cerr << "Unknown type\n";
+            return 1;
+        }
+
+        std::ofstream out(outputFile);
+        if (!out.is_open()) {
+            std::cerr << "Cannot open output file!\n";
+            return 1;
+        }
+
+        std::cout << "Running brute-force kNN... N=" << N << " dim=" << dim << "\n";
+
+        // --- BRUTE FORCE KNN ---
+        for (int i = 0; i < N; i++) {
+            std::vector<std::pair<float,int>> dist;
+            dist.reserve(N-1);
+
+            for (int j = 0; j < N; j++) {
+                if (i == j) continue;
+                float d = L2sqr(DB[i], DB[j], dim);
+                dist.emplace_back(d, j);
+            }
+
+            std::nth_element(dist.begin(), dist.begin()+k, dist.end());
+
+            out << i << ": ";
+            for (int t = 0; t < k; t++)
+                out << dist[t].second << " ";
+            out << "\n";
+        }
+
+        out.close();
+        std::cout << "Brute-force KNN graph written to " << outputFile << "\n";
+        return 0;
     }
     else if(use_ivfpq){
         cout << "\n>>> Running IVFPQ Algorithm... \n";
