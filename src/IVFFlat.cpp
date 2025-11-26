@@ -496,28 +496,72 @@ void IVFFlat :: print_params() {
               << "range: " << boolalpha << range << "\n";
 }
 
-vector<vector<int>> IVFFlat::ComputeKNNGraph(int k) {
-    vector<vector<int>> graph(dataset_reference.size());
+// vector<vector<int>> IVFFlat::ComputeKNNGraph(int k) {
+//     vector<vector<int>> graph(dataset_reference.size());
     
-    for(size_t i = 0; i < dataset_reference.size(); ++i) {
+//     for(size_t i = 0; i < dataset_reference.size(); ++i) {
         
-        vector<pair<double,int>> dist;
-        dist.reserve(dataset_reference.size());
+//         vector<pair<double,int>> dist;
+//         dist.reserve(dataset_reference.size());
 
-        for(size_t j = 0; j< dataset_reference.size(); ++j) {
-           if (i == j) continue;
-            double d = euclidean_distance(dataset_reference[i], dataset_reference[j]);
-            dist.push_back({d, (int)j});
+//         for(size_t j = 0; j< dataset_reference.size(); ++j) {
+//            if (i == j) continue;
+//             double d = euclidean_distance(dataset_reference[i], dataset_reference[j]);
+//             dist.push_back({d, (int)j});
+//         }
+
+//          // take k smallest
+//         nth_element(dist.begin(), dist.begin() + k, dist.end());
+//         sort(dist.begin(), dist.begin() + k);
+        
+//         graph[i].reserve(k);
+//         for (int t = 0; t < k; t++)
+//             graph[i].push_back(dist[t].second);
+//     }
+    
+//     return graph;
+// }
+
+vector<vector<int>> IVFFlat::ComputeKNNGraphApprox(int k) {
+    size_t n = dataset_reference.size();
+    vector<vector<int>> graph(n);
+    
+    // Για κάθε σημείο:
+    for (size_t i = 0; i < n; ++i) {
+
+        // Step 1: Χρήση των nprobe κοντινών centroids για να περιορίσουμε χώρο αναζήτησης
+        vector<int> probe_centroids = find_nearest_centroids(dataset_reference[i], nprobe);
+
+        vector<int> candidates;
+        for (int c : probe_centroids) {
+            const auto& members = cluster_members[c];
+            candidates.insert(candidates.end(), members.begin(), members.end());
         }
 
-         // take k smallest
-        nth_element(dist.begin(), dist.begin() + k, dist.end());
-        sort(dist.begin(), dist.begin() + k);
-        
-        graph[i].reserve(k);
-        for (int t = 0; t < k; t++)
-            graph[i].push_back(dist[t].second);
+        // Step 2: Υπολογισμός απόστασης ΜΟΝΟ με τα candidates
+        // (όχι με όλα τα 1M points)
+        priority_queue<pair<double,int>> max_heap;
+
+        for (int idx : candidates) {
+            if (idx == i) continue;
+            double dist = euclidean_distance(dataset_reference[i], dataset_reference[idx]);
+
+            if ((int)max_heap.size() < k)
+                max_heap.push({dist, idx});
+            else if (dist < max_heap.top().first) {
+                max_heap.pop();
+                max_heap.push({dist, idx});
+            }
+        }
+
+        // Step 3: Γέμισμα γραφήματος
+        graph[i].resize(max_heap.size());
+        int pos = max_heap.size() - 1;
+        while (!max_heap.empty()) {
+            graph[i][pos--] = max_heap.top().second;
+            max_heap.pop();
+        }
     }
-    
+
     return graph;
 }

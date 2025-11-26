@@ -216,7 +216,7 @@ int main(int argc, char* argv[]){
     else if(use_ivfflat_knn){
         cout << "\n>>> Running IVFFlat KNN Graph Mode...\n";
 
-        int kclusters = 14, nprobe = 2, knn_k = 10, seed = 1;
+        int kclusters = 14, nprobe = 1, knn_k = 15, seed = 1;
         string output_knn;
 
         for(int i = 1; i < argc; i++){
@@ -233,12 +233,14 @@ int main(int argc, char* argv[]){
         }
 
         // Build IVFFlat index (no queries)
-        IVFFlat ivff(seed, input_file, "", "", kclusters, nprobe, knn_k, 0.0, type, false);
+        IVFFlat ivff(seed, input_file, "", "", kclusters, nprobe, knn_k, 2.0, type, true);
         ivff.Initialize(dataset.size());
         ivff.CreateClusters(dataset);
 
         // Compute graph
-        auto G = ivff.ComputeKNNGraph(knn_k);
+        // auto G = ivff.ComputeKNNGraph(knn_k);
+        auto G = ivff.ComputeKNNGraphApprox(knn_k);
+
 
         // Save graph
         ofstream out(output_knn);
