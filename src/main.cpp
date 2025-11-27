@@ -269,6 +269,7 @@ int main(int argc, char* argv[]){
 
         cout << "k-NN graph written to: " << output_knn << endl;
     }
+    // Στο main(), βελτίωσε το -bruteforce_knn case
     else if (use_bruteforce_knn) {
         std::string dataFile, type = "", outputFile;
         int k = 10;
@@ -280,48 +281,60 @@ int main(int argc, char* argv[]){
             else if (strcmp(argv[i], "-o") == 0) outputFile = argv[++i];
         }
 
-        int N = 0, dim = 0;
-        std::vector<float*> DB;
-
-        if (type == "sift"){
-            auto tmp = return_sift_data(dataFile);
-            N = tmp.size();
-            dim = tmp[0].size();
-            DB.resize(N);
-            for (int i = 0; i < N; i++)
-                DB[i] = tmp[i].data();
-        }
-        // else if (type == "mnist")
-        //     DB = read_mnist_csv(dataFile, N, dim);
-        else {
-            std::cerr << "Unknown type\n";
+        if (outputFile.empty()) {
+            std::cerr << "Error: Must specify -o for kNN graph output\n";
             return 1;
         }
+
+        // Load data based on type
+        std::vector<std::vector<float>> data;
+        if (type == "sift") {
+            data = return_sift_data(dataFile);
+        } else if (type == "mnist") {
+            data = return_mnist_data(dataFile);
+        } else {
+            std::cerr << "Unknown type: " << type << "\n";
+            return 1;
+        }
+
+        int N = data.size();
+        int dim = data[0].size();
+
+        std::cout << "Running brute-force kNN... N=" << N << " dim=" << dim << " k=" << k << "\n";
 
         std::ofstream out(outputFile);
         if (!out.is_open()) {
-            std::cerr << "Cannot open output file!\n";
+            std::cerr << "Cannot open output file: " << outputFile << "\n";
             return 1;
         }
 
-        std::cout << "Running brute-force kNN... N=" << N << " dim=" << dim << "\n";
-
-        // --- BRUTE FORCE KNN ---
+        // Optimized brute force with progress
         for (int i = 0; i < N; i++) {
-            std::vector<std::pair<float,int>> dist;
-            dist.reserve(N-1);
+            if (i % 1000 == 0) {
+                std::cout << "Processing point " << i << "/" << N << "\n";
+            }
+            
+            std::vector<std::pair<float, int>> distances;
+            distances.reserve(N-1);
 
             for (int j = 0; j < N; j++) {
                 if (i == j) continue;
-                float d = L2sqr(DB[i], DB[j], dim);
-                dist.emplace_back(d, j);
+                float d = 0.0f;
+                for (int d_idx = 0; d_idx < dim; d_idx++) {
+                    float diff = data[i][d_idx] - data[j][d_idx];
+                    d += diff * diff;
+                }
+                distances.emplace_back(std::sqrt(d), j);
             }
 
-            std::nth_element(dist.begin(), dist.begin()+k, dist.end());
+            // Get k smallest
+            std::nth_element(distances.begin(), distances.begin() + k, distances.end());
+            std::sort(distances.begin(), distances.begin() + k);
 
-            out << i << ": ";
-            for (int t = 0; t < k; t++)
-                out << dist[t].second << " ";
+            out << i << ":";
+            for (int t = 0; t < k; t++) {
+                out << " " << distances[t].second;
+            }
             out << "\n";
         }
 
