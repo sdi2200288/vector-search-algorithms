@@ -1,86 +1,170 @@
-# Ανάπτυξη Λογισμικού για Αλγοριθμικά Προβλήματα - 1η Προγραμματιστική Εργασία - Αναζήτηση διανυσμάτων στη C/C++
+# 🔍 Vector Search Algorithms in C/C++
 
-## Στοιχεία Φοιτητών
-**Ομάδα:**
-1. Παπαθανασίου Ελένη - 1115202200135
-2. Τόντου Αλτάνη-Δάφνη - 1115202200288
+> Approximate Nearest Neighbor (ANN) search on high-dimensional vectors — implemented from scratch.
 
-## Περιγρφή 
-Το project έχει υλοποιηθεί σε C++, η πειαματική ανάλυση σε python και υπάρχουν δύο bash αρχεία τα οποία 
-χρησιμοποιούνται για την πειραματική ανάλυση. 
+![Language](https://img.shields.io/badge/Language-C%2B%2B-blue)
+![Analysis](https://img.shields.io/badge/Analysis-Python-yellow)
+![Dataset](https://img.shields.io/badge/Datasets-MNIST%20%7C%20SIFT-orange)
+![Course](https://img.shields.io/badge/Course-Algorithm%20Development-purple)
+![Team](https://img.shields.io/badge/Team-2%20members-green)
 
+---
 
-Στην πειραματική ανάλυση παράγονται τα αρχεία:
-1. algorithm_comparison_table.csv
-2. final_metrics_comparison.csv
-3. detailed_summary.csv
+## About This Project
 
-, τα οποία περιέχουν τα δεδομένα από τα αποτελέσματα των αλγορίθων που χρειάζονται για την υλοποίηση της πειραματικής ανάλυσης, και οι εικόνες με τα γραφήματα:
+This project implements and benchmarks four **Approximate Nearest Neighbor (ANN)** algorithms
+for searching high-dimensional vectors. The algorithms are evaluated on two real-world datasets
+(MNIST and SIFT) and compared across key performance metrics: **QPS (Queries Per Second)**,
+**Recall**, and **Approximation Factor (AF)**.
 
-4. af_vs_recall_correlation.png
-5. algorithm_comparison.png
-6. correlation_matrix.png
-7. lsh_parameter_sensitivity.png
-8. qps_by_algorithm.png
-9. qps_vs_af.png
-10. qps_vs_recall.png
-11. recall_by_algorithm.png 
+This is the 1st Programming Assignment for the course *"Software Development for Algorithmic Problems"*.
 
+---
 
-**Υλοποιημένοι Αλγόριθμοι:**
-1. LSH (Locality Sensitive Hashing)
-2. Hypercube (Τυχαία προβολή σε Υπερκύβο)
-3. IVFFlat (Inverted File Flat)
-4. IVFPQ (Inverted File Product Quantization)
+## Team
 
-## Κατάλογος Αρχείων
-### Αρχεία πηγαίου κώδικα -> **src/**
-1. **lsh.cpp**         : υλοποίηση LSH αλγορίθμου
-2. **hypercube.cpp**   : υλοποίηση Hypercube αλγορίθμου
-3. **IVFFlat.cpp**     : υλοποίηση IVFFlat αλγορίθμου
-4. **ivfpq.cpp**       : υλοποίηση IVFPQ αλγορίθμου
-5. **ivfpq_index.cpp** : βοηθητική δομή για IVFPQ
-6. **k_means.cpp**     : αλγόριθμος k-means clustering
-7. **mnist_data.cpp**  : διαχείριση MNIST dataset
-8. **sift_data.cpp**   : διαχείριση SIFT dataset
-9. **main.cpp**
+| Name | Student ID |
+|------|-----------|
+| Παπαθανασίου Ελένη | _1115202200135_ |
+| Τόντου Αλτάνη-Δάφνη | 1115202200288 |
 
-### Αρχεία επικεφαλίδας -> **include/**
-1. **hypercube.hpp**
-2. **IVFFlat.hpp**
-3. **ivfpq_index.hpp**
-4. **ivfpq.hpp**
-5. **k_means.hpp**
-6. **lsh.hpp**
-7. **mnist_data.hpp**
-8. **sift_data.hpp**
+---
 
-### Αρχεία για την πειραματική ανάλυση -> **experiment/**
-1. **parse_results.py**  : εξαγωγή μετρικών από το output file
-2. **create_plot.py**    : δημιουργία γραφημάτων για την σύγκριση
+## Algorithms Implemented
 
-### Επιπλέον αρχεία 
-1. **Makefile** : για τη σωστη μεταγλώττιση του κώδικα
-2. **run_sift.sh** : χρησιμοποιείται στην πειραματική ανάλυση
-3. **run_mnist.sh** : χρησιμοποιείται στην πειραματική ανάλυση
+| Algorithm | Description |
+|-----------|-------------|
+| **LSH** | Locality Sensitive Hashing — hash-based ANN search |
+| **Hypercube** | Random projection onto a hypercube for fast ANN |
+| **IVFFlat** | Inverted File index with flat (exact) distance computation |
+| **IVFPQ** | Inverted File index with Product Quantization for compressed search |
 
-## Οδηγίες Μεταγλώττισης
-Αρχικά με την εντολή ***make all*** κάνουμε compile τα απαραίτητα αρχεία για την εκτέλεση του κώδικα.
+---
 
-Στη συνέχεια για να τρέξουμε ξεχωριστά τους αλγόριθμους χρησιμοποιούμε αντίστοιχα τις εντολές 
-***make run_lsh***, ***make run_hypercube***, ***make run_ivfflat*** και ***make run_ivfpq***.
+## Tech Stack
 
-Αν θέλουμε να τρέξουμε τα αρχεία για την πειραματική ανάλυση, κάνουμε πρώτα compile και run το bash αρχείο με 
-τις εντολές ***make sift_bash*** και ***make run_sift_bash*** για τα sift ή ***make mnist_bash*** και ***make run_mnist_bash*** για τα mnist, και στη συνέχεια τρέχουμε διαδοχικά τις εντολές 
-***make run_parse_results*** και ***make run_create_plots***.
+![C++](https://img.shields.io/badge/C%2B%2B-g%2B%2B-blue)
+![Python](https://img.shields.io/badge/Python-3.x-yellow)
+![pandas](https://img.shields.io/badge/pandas-data%20analysis-lightgrey)
+![matplotlib](https://img.shields.io/badge/matplotlib-plotting-lightgrey)
+![Make](https://img.shields.io/badge/Build-Makefile-lightgrey)
 
-Για να διαγράψουμε τα παραγόμενα αρχεία χρησιμοποιούμε την εντολή ***make clean***. 
+- **C++** (g++) — algorithm implementation
+- **Python 3** — experimental analysis & plotting (`pandas`, `matplotlib`, `seaborn`, `numpy`)
+- **Makefile** — build system
+- **Bash** — automated experiment scripts
 
-## Απαιτήσεις Συστήματος
-1. **C++** compiler (g++)
-2. **Python 3** με βιβλιοθήκες:
-  - pandas
-  - matplotlib  
-  - seaborn
-  - numpy
-3. **Linux** environment
+---
+
+## Project Structure
+
+```
+📁 src/
+   ├── lsh.cpp           → LSH algorithm
+   ├── hypercube.cpp     → Hypercube algorithm
+   ├── IVFFlat.cpp       → IVFFlat algorithm
+   ├── ivfpq.cpp         → IVFPQ algorithm
+   ├── ivfpq_index.cpp   → IVFPQ auxiliary index structure
+   ├── k_means.cpp       → k-means clustering (used by IVF methods)
+   ├── mnist_data.cpp    → MNIST dataset loader
+   ├── sift_data.cpp     → SIFT dataset loader
+   └── main.cpp
+
+📁 include/
+   └── *.hpp             → Header files for all modules
+
+📁 experiment/
+   ├── parse_results.py  → Extract metrics from output files
+   └── create_plot.py    → Generate comparison plots
+
+📄 Makefile
+📄 run_sift.sh           → SIFT experiment runner
+📄 run_mnist.sh          → MNIST experiment runner
+```
+
+---
+
+## Build & Run
+
+### Compile
+
+```bash
+make all
+```
+
+### Run individual algorithms
+
+```bash
+make run_lsh
+make run_hypercube
+make run_ivfflat
+make run_ivfpq
+```
+
+### Run experimental analysis (SIFT)
+
+```bash
+make sift_bash
+make run_sift_bash
+make run_parse_results
+make run_create_plots
+```
+
+### Run experimental analysis (MNIST)
+
+```bash
+make mnist_bash
+make run_mnist_bash
+make run_parse_results
+make run_create_plots
+```
+
+### Clean build files
+
+```bash
+make clean
+```
+
+---
+
+## Experimental Output
+
+Running the analysis pipeline generates the following files:
+
+**CSV reports:**
+- `algorithm_comparison_table.csv`
+- `final_metrics_comparison.csv`
+- `detailed_summary.csv`
+
+**Plots:**
+- `algorithm_comparison.png`
+- `qps_by_algorithm.png` — queries per second per algorithm
+- `recall_by_algorithm.png` — recall per algorithm
+- `qps_vs_recall.png` — speed vs accuracy tradeoff
+- `qps_vs_af.png` — speed vs approximation factor
+- `af_vs_recall_correlation.png`
+- `lsh_parameter_sensitivity.png`
+- `correlation_matrix.png`
+
+---
+
+## System Requirements
+
+- **OS:** Linux
+- **C++ compiler:** g++
+- **Python 3** with: `pandas`, `matplotlib`, `seaborn`, `numpy`
+
+---
+
+## Key Concepts Demonstrated
+
+- Approximate Nearest Neighbor search in high-dimensional spaces
+- Locality Sensitive Hashing (LSH) theory and implementation
+- Product Quantization for vector compression
+- k-means clustering from scratch
+- Performance benchmarking: QPS, Recall, Approximation Factor
+- Experimental analysis and data visualization
+
+---
+
+*1st Programming Assignment · Software Development for Algorithmic Problems*
